@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block datesel %}
+<div class="container">
+  <form action="/list" method="post" class="form-inline">
+    <label for="date">日付: </label>
+    <select id="date" name="date" class="form-control">
+      {% for dbfile in dblist %}
+        {% if dbfile == select %}
+          <option value="{{dbfile}}" selected>{{dbfile}}
+        {% else %}
+          <option value="{{dbfile}}">{{dbfile}}
+        {% endif %}
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">OK</button>
+  </form>
+</div>
+{% endblock %}

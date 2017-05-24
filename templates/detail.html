@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block datesel %}
+<div class="container">
+  <button class="btn btn-primary" type="button" onclick="history.back()">リストに戻る</button>
+</div>
+{% endblock %}
+{% block detail %}
+<div class="container">
+  <table class="table table-condensed">
+    <tr><td>ID</td><td>{{data.id}}</td></tr>
+    <tr><td>詳細</td><td><a href="{{data.url}}">{{data.url}}</a></td></tr>
+    <tr><td>ユーザーID</td><td>@{{data.userid}}</td></tr>
+    <tr><td>いいね数</td><td>{{data.fav}}</td></tr>
+    <tr><td>リツイート数</td><td>{{data.rt}}</td></tr>
+    <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
+    <tr><td>取得時刻</td><td>{{data.time}}</td></tr>
+  </table>
+  <img src="{{data.image}}" class="img-responsive img-thumbnail">
+</div>
+{% endblock %}
