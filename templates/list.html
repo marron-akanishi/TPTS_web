@@ -7,7 +7,7 @@
     <table class="table">
       <tr><th></th><th>サムネイル</th><th>URL</th></tr>
       {% for detail in filelist %}
-        <tr>
+        <tr id="{{detail.id}}">
           <td>
             <form action="/list/detail" method="get">
               <input type="hidden" name="date" value="{{select}}">

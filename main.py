@@ -7,7 +7,7 @@ import flask
 app = flask.Flask(__name__)
 
 # DB一覧
-filelist = [path.split('\\')[1].split('.')[0] for path in glob.glob("collect/*.db")]
+filelist = []
 
 # DBからファイルリスト取得
 def get_list(path):
@@ -55,11 +55,14 @@ def get_detail(filename, dbfile):
 @app.route('/')
 def index():
     # index.html をレンダリングする
+    global filelist
+    filelist = [path.split('\\')[1].split('.')[0] for path in glob.glob("collect/*.db")]
     return flask.render_template('index.html', dblist=filelist)
 
 # /list にアクセスしたときの処理
 @app.route('/list', methods=['GET', 'POST'])
 def image_list():
+    global filelist
     if flask.request.method == 'POST':
         # リクエストフォーム取得して
         date = flask.request.form['date']
@@ -72,9 +75,10 @@ def image_list():
         # エラーなどでリダイレクトしたい場合はこんな感じで
         return flask.redirect(flask.url_for('index'))
 
-# /detail にアクセスしたときの処理
+# /list/detail にアクセスしたときの処理
 @app.route('/list/detail', methods=['GET', 'POST'])
 def image_detail():
+    global filelist
     if flask.request.method == 'GET':
         # リクエストフォーム取得して
         image_id = flask.request.args.get('id')

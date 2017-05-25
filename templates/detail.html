@@ -2,7 +2,7 @@
 {% block datesel %}
 <div class="container">
   <div class="form-inline">
-    <form action="/list" method="post">
+    <form action="/list#{{data.id}}" method="post">
       <button class="btn btn-primary" type="submit" name="date" value="{{date}}">リストに戻る</button>
     </form>
     <br>
