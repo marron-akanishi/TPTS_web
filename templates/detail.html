@@ -6,25 +6,41 @@
       <button class="btn btn-primary" type="submit" name="date" value="{{date}}">リストに戻る</button>
     </form>
     <br>
-    <form action="/list/detail" method="post">
+    <form action="/list/detail" method="get">
       <input type="hidden" name="date" value="{{date}}">
-      <button class="btn btn-default" type="submit" name="open" value="{{data.id - 1}}">＜</button>
-      <button class="btn btn-default" type="submit" name="open" value="{{data.id + 1}}">＞</button>
+      {% if data.id-1 >= 0 %}
+        <button class="btn btn-default" type="submit" name="id" value="{{data.id - 1}}">＜</button>
+      {% else %}
+        <button class="btn btn-default" disabled>＜</button>
+      {% endif %}
+      {% if data.id+1 < max %}
+        <button class="btn btn-default" type="submit" name="id" value="{{data.id + 1}}">＞</button>
+      {% else %}
+        <button class="btn btn-default" disabled>＞</button>
+      {% endif %}
     </form>
   </div>
 </div>
 {% endblock %}
 {% block detail %}
+<script type="text/javascript">
+  var facex = '{{data.facex}}';
+  var facey = '{{data.facey}}';
+  var facew = '{{data.facew}}';
+  var faceh = '{{data.faceh}}';
+  var image_url = '{{data.image}}';
+</script>
+<script src="/static/js/face.js"></script>
 <div class="container">
   <table class="table table-condensed">
     <tr><td>ID</td><td>{{data.id}}</td></tr>
-    <tr><td>詳細</td><td><a href="{{data.url}}" target="_blank">{{data.url}}</a></td></tr>
+    <tr><td>ツイートURL</td><td><a href="{{data.url}}" target="_blank">{{data.url}}</a></td></tr>
     <tr><td>ユーザーID</td><td>@{{data.userid}}</td></tr>
     <tr><td>いいね数</td><td>{{data.fav}}</td></tr>
     <tr><td>リツイート数</td><td>{{data.rt}}</td></tr>
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
     <tr><td>取得時刻</td><td>{{data.time}}</td></tr>
   </table>
-  <a href="{{data.image}}:orig"><img src="{{data.image}}" class="img-responsive img-thumbnail"></a>
+  <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
 </div>
 {% endblock %}

@@ -1,0 +1,19 @@
+#scroll_to_top {
+  /* 「TOPに戻る」ボタンにカーソルを載せた時に、
+  カーソルが指のマークになるようにしています。 */
+  cursor: pointer;
+
+  /* 常にページの右下に表示されるように固定します。 */
+  position: fixed;  /* 位置を固定させます。 */
+  right: 20px;      /* 画面の右橋から20px空けます。 */
+  bottom: 20px;     /* 画面の下端から20px空けます。 */
+}
+#scroll_to_top.button {
+  /* 「TOPに戻る」ボタンのデザインを整えています。 */
+  padding: 15px 15px 3px;
+  font-size: 15px;
+  display: inline-block;
+  border: 1px solid #999;
+  border-radius: 1em;
+  background-color: #eee;
+}

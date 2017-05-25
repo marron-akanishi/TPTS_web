@@ -17,7 +17,7 @@ def get_list(path):
     cur = conn.cursor()
     cur.execute( "select * from list" )
     for row in cur:
-        images.append({"id":row["filename"], "url":row["url"], "image":row["image"]})
+        images.append({"id":int(row["filename"]), "url":row["url"], "image":row["image"]})
     cur.close()
     conn.close()
     return images
@@ -28,21 +28,27 @@ def get_detail(filename, dbfile):
     conn = sqlite3.connect(dbfile)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
+    cur.execute("select count(filename) from list")
+    count = cur.fetchone()[0]
     cur.execute( "select * from list where filename = '" + str(filename).zfill(5) + "'" )
-    for row in cur:
-        detail = {
-            "id":int(row["filename"]),
-            "image":row["image"],
-            "url":row["url"],
-            "userid":row["username"],
-            "fav":row["fav"],
-            "rt":row["retweet"],
-            "tags":row["tags"],
-            "time":row["time"]
-        }
+    row = cur.fetchone()
+    detail = {
+        "id":int(row["filename"]),
+        "image":row["image"],
+        "url":row["url"],
+        "userid":row["username"],
+        "fav":row["fav"],
+        "rt":row["retweet"],
+        "tags":row["tags"],
+        "time":row["time"],
+        "facex":row["facex"],
+        "facey":row["facey"],
+        "facew":row["facew"],
+        "faceh":row["faceh"]
+    }
     cur.close()
     conn.close()
-    return detail
+    return detail,count
 
 # ここからウェブアプリケーション用のルーティングを記述
 # index にアクセスしたときの処理
@@ -69,16 +75,16 @@ def image_list():
 # /detail にアクセスしたときの処理
 @app.route('/list/detail', methods=['GET', 'POST'])
 def image_detail():
-    if flask.request.method == 'POST':
+    if flask.request.method == 'GET':
         # リクエストフォーム取得して
-        image_id = flask.request.form['open']
-        date = flask.request.form['date']
+        image_id = flask.request.args.get('id')
+        date = flask.request.args.get('date')
         if int(image_id) < 0:
             image_id = 0
         # 画像情報辞書
-        detail = get_detail(image_id, "collect/"+date+".db")
+        detail,count = get_detail(image_id, "collect/"+date+".db")
         # index.html をレンダリングする
-        return flask.render_template('detail.html', data=detail, date=date)
+        return flask.render_template('detail.html', data=detail, date=date, max=count)
     else:
         # エラーなどでリダイレクトしたい場合はこんな感じで
         return flask.redirect(flask.url_for('index'))

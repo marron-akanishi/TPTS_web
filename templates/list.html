@@ -1,21 +1,27 @@
 {% extends "index.html" %}
 {% block list %}
+<link href="/static/css/list.css" rel="stylesheet" type="text/css" />
+<script src="/static/js/totop.js"></script>
 <div class="container">
-  <table class="table">
-    <tr><th>ID</th><th>URL</th><th>サムネイル</th><th></th></tr>
-    {% for detail in filelist %}
-      <tr>
-        <td>{{detail.id}}</td>
-        <td><a href="{{detail.url}}" target="_blank">{{detail.url}}</a></td>
-        <td><img src="{{detail.image}}" height="100"></td>
-        <td>
-          <form action="/list/detail" method="post">
-            <input type="hidden" name="date" value="{{select}}">
-            <button class="btn btn-default btn-sm" type="submit" name="open" value="{{detail.id}}">詳細</button>
-          </form>
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+  <div class="table-responsive">
+    <table class="table">
+      <tr><th></th><th>サムネイル</th><th>URL</th></tr>
+      {% for detail in filelist %}
+        <tr>
+          <td>
+            <form action="/list/detail" method="get">
+              <input type="hidden" name="date" value="{{select}}">
+              <button class="btn btn-default btn-sm" type="submit" name="id" value="{{detail.id}}">詳細</button>
+            </form>
+          </td>
+          <td><img src="{{detail.image}}" height="100"></td>
+          <td><a href="{{detail.url}}" target="_blank">{{detail.url}}</a></td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div id="scroll_to_top" class="button">
+  <p>TOPに戻る</p>
 </div>
 {% endblock %}
