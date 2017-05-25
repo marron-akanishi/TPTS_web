@@ -1,0 +1,6 @@
+flake8==3.3.0
+Flask==0.12
+Jinja2==2.9.5
+numpy==1.12.1
+requests==2.14.2
+tweepy==3.5.0
