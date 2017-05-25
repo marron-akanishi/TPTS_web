@@ -17,7 +17,7 @@ def get_list(path):
     cur = conn.cursor()
     cur.execute( "select * from list" )
     for row in cur:
-        images.append({"id":row["filename"], "url":row["image"]})
+        images.append({"id":row["filename"], "url":row["url"], "image":row["image"]})
     cur.close()
     conn.close()
     return images
@@ -28,10 +28,10 @@ def get_detail(filename, dbfile):
     conn = sqlite3.connect(dbfile)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute( "select * from list where filename = '" + filename + "'" )
+    cur.execute( "select * from list where filename = '" + str(filename).zfill(5) + "'" )
     for row in cur:
         detail = {
-            "id":row["filename"],
+            "id":int(row["filename"]),
             "image":row["image"],
             "url":row["url"],
             "userid":row["username"],
@@ -55,7 +55,7 @@ def index():
 @app.route('/list', methods=['GET', 'POST'])
 def image_list():
     if flask.request.method == 'POST':
-        # リクエストフォームから「名前」を取得して
+        # リクエストフォーム取得して
         date = flask.request.form['date']
         # 画像一覧生成
         images = get_list("collect/" + date + ".db")
@@ -70,13 +70,15 @@ def image_list():
 @app.route('/list/detail', methods=['GET', 'POST'])
 def image_detail():
     if flask.request.method == 'POST':
-        # リクエストフォームから「名前」を取得して
+        # リクエストフォーム取得して
         image_id = flask.request.form['open']
         date = flask.request.form['date']
+        if int(image_id) < 0:
+            image_id = 0
         # 画像情報辞書
         detail = get_detail(image_id, "collect/"+date+".db")
         # index.html をレンダリングする
-        return flask.render_template('detail.html', data=detail)
+        return flask.render_template('detail.html', data=detail, date=date)
     else:
         # エラーなどでリダイレクトしたい場合はこんな感じで
         return flask.redirect(flask.url_for('index'))

@@ -1,7 +1,17 @@
 {% extends "layout.html" %}
 {% block datesel %}
 <div class="container">
-  <button class="btn btn-primary" type="button" onclick="history.back()">リストに戻る</button>
+  <div class="form-inline">
+    <form action="/list" method="post">
+      <button class="btn btn-primary" type="submit" name="date" value="{{date}}">リストに戻る</button>
+    </form>
+    <br>
+    <form action="/list/detail" method="post">
+      <input type="hidden" name="date" value="{{date}}">
+      <button class="btn btn-default" type="submit" name="open" value="{{data.id - 1}}">＜</button>
+      <button class="btn btn-default" type="submit" name="open" value="{{data.id + 1}}">＞</button>
+    </form>
+  </div>
 </div>
 {% endblock %}
 {% block detail %}
@@ -15,6 +25,6 @@
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
     <tr><td>取得時刻</td><td>{{data.time}}</td></tr>
   </table>
-  <img src="{{data.image}}" class="img-responsive img-thumbnail">
+  <a href="{{data.image}}:orig"><img src="{{data.image}}" class="img-responsive img-thumbnail"></a>
 </div>
 {% endblock %}

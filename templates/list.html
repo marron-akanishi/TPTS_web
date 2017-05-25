@@ -2,15 +2,16 @@
 {% block list %}
 <div class="container">
   <table class="table">
-    <tr><th>ID</th><th>URL</th><th></th></tr>
+    <tr><th>ID</th><th>URL</th><th>サムネイル</th><th></th></tr>
     {% for detail in filelist %}
       <tr>
         <td>{{detail.id}}</td>
-        <td>{{detail.url}}</td>
+        <td><a href="{{detail.url}}" target="_blank">{{detail.url}}</a></td>
+        <td><img src="{{detail.image}}" height="100"></td>
         <td>
           <form action="/list/detail" method="post">
             <input type="hidden" name="date" value="{{select}}">
-            <button class="btn btn-default btn-sm" type="submit" name="open" value="{{detail.id}}">見る</button>
+            <button class="btn btn-default btn-sm" type="submit" name="open" value="{{detail.id}}">詳細</button>
           </form>
         </td>
       </tr>
