@@ -46,7 +46,7 @@ def face_2d(temp_file, userid, filename):
                 get = True
             else:
                 print("NOEYE  : " + userid + "-" + filename + "_" + str(i))
-    
+
     if get:
         return (dhash_calc(image), facex, facey, facew, faceh)
     else:

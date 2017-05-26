@@ -56,7 +56,7 @@ def get_detail(filename, dbfile):
 def index():
     # index.html をレンダリングする
     global filelist
-    filelist = [path.split('\\')[1].split('.')[0] for path in glob.glob("collect/*.db")]
+    filelist = [path.split('/')[1].split('.')[0] for path in glob.glob("collect/*.db")]
     return flask.render_template('index.html', dblist=filelist)
 
 # /list にアクセスしたときの処理
@@ -96,3 +96,4 @@ def image_detail():
 if __name__ == '__main__':
     app.debug = True # デバッグモード有効化
     app.run(host='0.0.0.0') # どこからでもアクセス可能に
+
