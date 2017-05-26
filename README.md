@@ -8,24 +8,22 @@
 ## ローカルで使う場合
 ### ArchLinuxの場合
 
-``` bash
+```bash
 # pacman -Syu --noconfirm && \
-# pacman -S --noconfirm base base-devel && \
 # pacman -S --noconfirm python python-pip git cmake gcc boost
 ```
 
-```
-git clone https://github.com/guni973/TPTS_web /usr/src/TPTS_web
-cd TPTS_web
-python -m venv venv
-source venv/bin/activate
-(venv) sudo pip install -r requirements.txt
+```bash
+$ git clone https://github.com/guni973/TPTS_web /usr/src/TPTS_web
+$ cd TPTS_web
+$ python -m venv venv
+$ source venv/bin/activate
+(venv) $ sudo pip install -r requirements.txt
 ```
 
-CMD python main.py
 
 oauth.pyをcollect/に追加
-``` python
+```python
 # oauth.py
 import tweepy as tp
 
@@ -48,11 +46,11 @@ def get_oauth():
 ```
 
 #### コレクターの起動
-```
-python collect/TL.py
+```bash
+(venv)$ python collect/TL.py
 ```
 
 #### ビュアーの起動
-```
-python main.ts
+```bash
+(venv)$ python main.ts
 ```
