@@ -2,26 +2,24 @@
 {% block list %}
 <link href="/static/css/list.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/totop.js"></script>
+<script src="/static/js/jquery.lazyload.min.js"></script>
 <div class="container">
   <p>件数 : {{count}}</p>
-  <div class="table-responsive">
-    <table class="table">
-      <tr><th>サムネイル(クリックで詳細)</th><th>ハッシュタグ</th></tr>
-      {% for detail in filelist %}
-        <tr id="{{detail.id}}">
-          <td>
-            <form action="/list/detail" method="get">
-              <input type="hidden" name="date" value="{{select}}">
-              <input type="hidden" name="id" value="{{detail.id}}">
-              <input type="image" src="{{detail.image}}" height="100">
-            </form>
-          </td>
-          <td>{{detail.tags}}</td>
-        </tr>
-      {% endfor %}
-    </table>
-  </div>
+  {% for detail in filelist %}
+    <form action="/list/detail" method="get" style="display:inline;">
+      <input type="hidden" name="date" value="{{select}}">
+      <input type="hidden" name="id" value="{{detail.id}}">
+      <button type="submit" class="btn btn-link">
+        <div class="trim" id="{{detail.id}}">
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" data-original="{{detail.image}}"/>
+        </div>
+      </button>
+    </form>
+  {% endfor %}
 </div>
+<script>
+  $("img").lazyload();
+</script>
 <div id="scroll_to_top" class="button">
   <p>TOPに戻る</p>
 </div>

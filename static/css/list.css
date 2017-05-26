@@ -17,3 +17,21 @@
   border-radius: 1em;
   background-color: #eee;
 }
+
+.trim {
+    overflow: hidden;
+    width: 200px;/* トリミングしたい枠の幅 */
+    height: 200px;/* トリミングしたい枠の高さ */
+    position: relative;
+}
+
+.trim img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: 100%;
+}

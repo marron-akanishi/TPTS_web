@@ -101,7 +101,7 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set url = '" + url + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set fav = " + str(status.favorite_count) + " where filename = '" + filename + "'")
                             self.dbfile.execute("update list set retweet = " + str(status.retweet_count) + " where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set tags = '" + str(tags)[1:-1].replace("'","") + "' where filename = '" + filename + "'")
+                            self.dbfile.execute("update list set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set facex = '" + str(facex) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set facey = '" + str(facey) + "' where filename = '" + filename + "'")

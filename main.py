@@ -20,7 +20,7 @@ def get_list(path):
     count = cur.fetchone()[0]
     cur.execute( "select * from list" )
     for row in cur:
-        images.append({"id":int(row["filename"]), "tags":row["tags"], "image":row["image"]})
+        images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
     cur.close()
     conn.close()
     return images,count
