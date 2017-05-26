@@ -3,19 +3,20 @@
 <link href="/static/css/list.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/totop.js"></script>
 <div class="container">
+  <p>件数 : {{count}}</p>
   <div class="table-responsive">
     <table class="table">
-      <tr><th></th><th>サムネイル</th><th>URL</th></tr>
+      <tr><th>サムネイル(クリックで詳細)</th><th>ハッシュタグ</th></tr>
       {% for detail in filelist %}
         <tr id="{{detail.id}}">
           <td>
             <form action="/list/detail" method="get">
               <input type="hidden" name="date" value="{{select}}">
-              <button class="btn btn-default btn-sm" type="submit" name="id" value="{{detail.id}}">詳細</button>
+              <input type="hidden" name="id" value="{{detail.id}}">
+              <input type="image" src="{{detail.image}}" height="100">
             </form>
           </td>
-          <td><img src="{{detail.image}}" height="100"></td>
-          <td><a href="{{detail.url}}" target="_blank">{{detail.url}}</a></td>
+          <td>{{detail.tags}}</td>
         </tr>
       {% endfor %}
     </table>

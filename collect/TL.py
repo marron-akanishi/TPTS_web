@@ -101,7 +101,7 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set url = '" + url + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set fav = " + str(status.favorite_count) + " where filename = '" + filename + "'")
                             self.dbfile.execute("update list set retweet = " + str(status.retweet_count) + " where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
+                            self.dbfile.execute("update list set tags = '" + str(tags)[1:-1].replace("'","") + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set facex = '" + str(facex) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set facey = '" + str(facey) + "' where filename = '" + filename + "'")
@@ -120,7 +120,7 @@ class StreamListener(tp.StreamListener):
         self.all = 0
         self.file_hash = []
         self.file_md5 = []
-        self.dbfile = sqlite3.connect(self.old_date.isoformat() + ".db")
+        self.dbfile = sqlite3.connect(os.path.abspath(__file__).replace(os.path.basename(__file__),self.old_date.isoformat() + ".db"))
         try:
             self.dbfile.execute("create table list (filename, image, username, url, fav, retweet, tags, time, facex, facey, facew, faceh)")
         except:

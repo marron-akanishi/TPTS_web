@@ -1,25 +1,29 @@
 {% extends "layout.html" %}
 {% block datesel %}
+<script src="/static/js/form.js"></script>
 <div class="container">
-  <div class="form-inline">
-    <form action="/list#{{data.id}}" method="post">
-      <button class="btn btn-primary" type="submit" name="date" value="{{date}}">リストに戻る</button>
-    </form>
-    <br>
-    <form action="/list/detail" method="get">
-      <input type="hidden" name="date" value="{{date}}">
-      {% if data.id-1 >= 0 %}
-        <button class="btn btn-default" type="submit" name="id" value="{{data.id - 1}}">＜</button>
-      {% else %}
-        <button class="btn btn-default" disabled>＜</button>
-      {% endif %}
-      {% if data.id+1 < max %}
-        <button class="btn btn-default" type="submit" name="id" value="{{data.id + 1}}">＞</button>
-      {% else %}
-        <button class="btn btn-default" disabled>＞</button>
-      {% endif %}
-    </form>
-  </div>
+  <form id="back" action="/list#{{data.id}}" method="post" class="form-inline" style="display:inline;">
+    <button class="btn btn-primary" type="submit" name="date" value="{{date}}">リストに戻る</button>
+  </form>
+  <form id="move" action="/list/detail" method="get" class="form-inline col-xs-offset-1" style="display:inline;">
+    <input type="hidden" name="date" value="{{date}}">
+    {% if data.id-1 >= 0 %}
+      <button id="prev" class="btn btn-default" type="submit" name="id" value="{{data.id - 1}}">＜</button>
+    {% else %}
+      <button class="btn btn-default" disabled>＜</button>
+    {% endif %}
+    {% if data.id+1 <= max %}
+      <button id="next" class="btn btn-default" type="submit" name="id" value="{{data.id + 1}}">＞</button>
+    {% else %}
+      <button class="btn btn-default" disabled>＞</button>
+    {% endif %}
+  </form>
+  <form id="idsel" action="/list/detail" method="get" class="form-inline col-xs-offset-1" style="display:inline;">
+    <input type="hidden" name="date" value="{{date}}">
+    <label for="idtext">ID指定:</label>
+    <input type="number" id="idtext" name="id" class="form-control" placeholder="0-{{max}}" min="0" max="{{max}}" required>
+    <button id="jump" class="btn btn-default" type="submit">ジャンプ</button>
+  </form>
 </div>
 {% endblock %}
 {% block detail %}
@@ -41,6 +45,6 @@
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
     <tr><td>取得時刻</td><td>{{data.time}}</td></tr>
   </table>
-  <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
+  <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
 </div>
 {% endblock %}
