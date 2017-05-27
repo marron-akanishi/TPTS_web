@@ -6,10 +6,20 @@
   /* 常にページの右下に表示されるように固定します。 */
   position: fixed;  /* 位置を固定させます。 */
   right: 20px;      /* 画面の右橋から20px空けます。 */
+  bottom: 80px;     /* 画面の下端から20px空けます。 */
+}
+#scroll_to_bottom {
+  /* 「TOPに戻る」ボタンにカーソルを載せた時に、
+  カーソルが指のマークになるようにしています。 */
+  cursor: pointer;
+
+  /* 常にページの右下に表示されるように固定します。 */
+  position: fixed;  /* 位置を固定させます。 */
+  right: 20px;      /* 画面の右橋から20px空けます。 */
   bottom: 20px;     /* 画面の下端から20px空けます。 */
 }
-#scroll_to_top.button {
-  /* 「TOPに戻る」ボタンのデザインを整えています。 */
+.button {
+  /* ボタンのデザインを整えています。 */
   padding: 15px 15px 3px;
   font-size: 15px;
   display: inline-block;
@@ -32,6 +42,10 @@
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  width: auto;
-  height: 100%;
+  width: 100%;
+  height: auto;
+}
+
+.thum:hover {
+  background: #dddddd;
 }
