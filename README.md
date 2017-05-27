@@ -1,11 +1,17 @@
 # TPTS web
 
 ## Dockerで使う場合
-``` bash
+```bash
 # docker build -t tpts .
 # docker run -d -p 5050:5000 tpts
 ```
 ## ローカルで使う場合
+
+
+### Debian系
+
+### RedHat系
+
 ### ArchLinuxの場合
 
 ```bash
