@@ -12,6 +12,7 @@ RUN pacman -S     --noconfirm base base-devel && \
 
 RUN git clone https://github.com/guni973/TPTS_web /usr/src/TPTS_web
 WORKDIR /usr/src/TPTS_web/
+RUN git pull
 
 ADD collect/oauth.py /usr/src/TPTS_web/collect
 RUN python -m venv venv
