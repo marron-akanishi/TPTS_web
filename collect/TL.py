@@ -120,7 +120,7 @@ class StreamListener(tp.StreamListener):
         self.all = 0
         self.file_hash = []
         self.file_md5 = []
-        self.dbfile = sqlite3.connect(self.old_date.isoformat() + ".db")
+        self.dbfile = sqlite3.connect(os.path.abspath(__file__).replace(os.path.basename(__file__),self.old_date.isoformat() + ".db"))
         try:
             self.dbfile.execute("create table list (filename, image, username, url, fav, retweet, tags, time, facex, facey, facew, faceh)")
         except:

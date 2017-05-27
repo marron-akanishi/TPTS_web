@@ -1,14 +1,18 @@
+import os
+from os.path import abspath, dirname
 import numpy as np
 import cv2
 try:
-    import dlib
+    from dlib import simple_object_detector
 except ImportError:
     print("Please install dlib")
     exit()
 
 # 検出に必要なファイル
-face_detector = dlib.simple_object_detector("detector_face.svm")
-eye_detector = dlib.simple_object_detector("detector_eye.svm")
+face_detector = simple_object_detector(abspath(dirname(__file__))
+        + '/' + 'detector_face.svm')
+eye_detector = simple_object_detector(abspath(dirname(__file__))
+        + '/' + 'detector_eye.svm')
 
 def face_2d(temp_file, userid, filename):
     # 最終検出結果

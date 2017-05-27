@@ -2,26 +2,32 @@
 {% block list %}
 <link href="/static/css/list.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/totop.js"></script>
-<div class="container">
-  <div class="table-responsive">
-    <table class="table">
-      <tr><th></th><th>サムネイル</th><th>URL</th></tr>
-      {% for detail in filelist %}
-        <tr id="{{detail.id}}">
-          <td>
-            <form action="/list/detail" method="get">
-              <input type="hidden" name="date" value="{{select}}">
-              <button class="btn btn-default btn-sm" type="submit" name="id" value="{{detail.id}}">詳細</button>
-            </form>
-          </td>
-          <td><img src="{{detail.image}}" height="100"></td>
-          <td><a href="{{detail.url}}" target="_blank">{{detail.url}}</a></td>
-        </tr>
-      {% endfor %}
-    </table>
-  </div>
+<script src="/static/js/jquery.lazyload.min.js"></script>
+<div class="container-fluid">
+  <p>件数 : {{count}}</p>
+  {% for detail in filelist %}
+    <form action="/list/detail" method="get" style="display:inline;">
+      <input type="hidden" name="date" value="{{select}}">
+      <input type="hidden" name="id" value="{{detail.id}}">
+      <button type="submit" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
+        <div class="trim" id="{{detail.id}}">
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP//////zCH5BAEHAAAALAAAAAABAAEAAAICRAEAOw==" data-original="{{detail.image}}"/>
+          {% if detail.tags != "" %}
+            <span class="badge">タグあり</span>
+          {% endif %}
+        </div>
+      </button>
+    </form>
+  {% endfor %}
 </div>
+<script>
+  $("img").lazyload();
+  $('[data-toggle="tooltip"]').tooltip();
+</script>
 <div id="scroll_to_top" class="button">
-  <p>TOPに戻る</p>
+  <p>トップに戻る</p>
+</div>
+<div id="scroll_to_bottom" class="button">
+  <p>最新の画像へ</p>
 </div>
 {% endblock %}
