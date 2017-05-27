@@ -1,32 +1,14 @@
 # TPTS web
 
-## Dockerで使う場合
+## Dockerで使う場合(Host: ArchLinux, Gest: ArchLinux)
+localhost:5050にポートフォワードしている。
+/etc/localtimeにバインドして、JST対応
 ```bash
 # docker build -t tpts .
-# docker run -d -p 5050:5000 tpts
+# docker run -d -p 5050:5000 -ti -v /etc/localtime:/etc/localtime:ro tpts
 ```
+
 ## ローカルで使う場合
-
-
-### Debian系
-
-### RedHat系
-
-### ArchLinuxの場合
-
-```bash
-# pacman -Syu --noconfirm && \
-# pacman -S --noconfirm python python-pip git cmake gcc boost
-```
-
-```bash
-$ git clone https://github.com/guni973/TPTS_web /usr/src/TPTS_web
-$ cd TPTS_web
-$ python -m venv venv
-$ source venv/bin/activate
-(venv) $ sudo pip install -r requirements.txt
-```
-
 
 oauth.pyをcollect/に追加
 ```python
@@ -51,12 +33,38 @@ def get_oauth():
     return auth
 ```
 
+
+### Debian系の場合
+```bash
+$ sudo apt install python3 python3-pip git cmake gcc boost
+```
+
+### RedHat系の場合
+```bash
+$ sudo dnf install python3 python3-pip git cmake gcc boost
+```
+
+### ArchLinuxの場合
+
+```bash
+# pacman -S python python-pip git cmake gcc boost
+```
+
+
+```bash
+$ git clone https://github.com/guni973/TPTS_web
+$ cd TPTS_web
+$ python3 -m venv venv
+$ source venv/bin/activate
+(venv) $ sudo pip install -r requirements.txt
+```
+
 #### コレクターの起動
 ```bash
-(venv)$ python collect/TL.py
+(venv)$ python3 collect/TL.py
 ```
 
 #### ビュアーの起動
 ```bash
-(venv)$ python main.ts
+(venv)$ python3 main.ts
 ```
