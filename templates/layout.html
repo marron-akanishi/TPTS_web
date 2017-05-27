@@ -19,18 +19,24 @@
     <script src="/static/js/bootstrap.min.js"></script>
   </head>
   <body style="padding-top:70px;">
-    {%- block topbar -%}
+    {%- block navbar -%}
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">二次元画像集めたったー</a>
-        </div>
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">二次元画像集めたったー</a>
       </div>
+      <span class="navbar-text">
+        Powered by TPTS
+      </span>
     </nav>
     {%- endblock -%}
-    {% block datesel %}{% endblock %}
+    {% block control %}{% endblock %}
     <br>
     {% block list %}{% endblock %}
     {% block detail %}{% endblock %}
+    {%- block footer -%}
+    <div class="fixed-bottom text-center">
+      Copyright © 2017 Marron Akanishi All Rights Reserved. 各画像の著作権は、著作権者に帰属します。
+    </div>
+    {%- endblock -%}
   </body>
 </html>

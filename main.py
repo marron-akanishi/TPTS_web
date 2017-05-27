@@ -42,7 +42,7 @@ def get_detail(filename, dbfile):
         "userid":row["username"],
         "fav":row["fav"],
         "rt":row["retweet"],
-        "tags":row["tags"],
+        "tags":row["tags"][1:-1],
         "time":row["time"],
         "facex":row["facex"],
         "facey":row["facey"],
@@ -60,7 +60,7 @@ def index():
     # index.html をレンダリングする
     global filelist
     filelist = [path.split(os.sep)[1].split('.')[0] for path in glob.glob("collect/*.db")]
-    return flask.render_template('index.html', dblist=filelist)
+    return flask.render_template('index.html', dblist=filelist, select=filelist[-1])
 
 # /list にアクセスしたときの処理
 @app.route('/list', methods=['GET', 'POST'])
