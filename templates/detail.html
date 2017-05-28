@@ -39,7 +39,16 @@
   <table class="table table-condensed">
     <tr><td>ID</td><td>{{data.id}}</td></tr>
     <tr><td>ツイートURL</td><td><a href="{{data.url}}" target="_blank">{{data.url}}</a></td></tr>
-    <tr><td>ユーザーID</td><td>@{{data.userid}}</td></tr>
+    <tr>
+      <td>ユーザーID</td>
+      <td>
+        {% if idcount != 1 %}
+        <a href="../../search?date={{date}}&userid={{data.userid}}" data-toggle="tooltip" data-placement="right" title="同一IDの画像が{{idcount}}枚あります">@{{data.userid}}</a>
+        {% else %}
+        @{{data.userid}}
+        {% endif %}
+      </td>
+    </tr>
     <tr><td>いいね数</td><td>{{data.fav}}</td></tr>
     <tr><td>リツイート数</td><td>{{data.rt}}</td></tr>
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
@@ -47,4 +56,7 @@
   </table>
   <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
 </div>
+<script>
+  $('[data-toggle="tooltip"]').tooltip();
+</script>
 {% endblock %}
