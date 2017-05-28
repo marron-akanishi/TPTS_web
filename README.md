@@ -1,6 +1,6 @@
 # TPTS web
 
-## Dockerで使う場合(Host: ArchLinux, Gest: ArchLinux)
+## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
 localhost:5050にポートフォワードしている。
 /etc/localtimeにバインドして、JST対応
 ```bash
@@ -66,5 +66,5 @@ $ source venv/bin/activate
 
 #### ビュアーの起動
 ```bash
-(venv)$ python3 main.ts
+(venv)$ python3 main.py
 ```
