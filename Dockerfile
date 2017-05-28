@@ -10,7 +10,7 @@ RUN pacman -S     --noconfirm base base-devel && \
     pacman -S     --noconfirm python python-pip git cmake gcc boost
 
 
-RUN git clone https://github.com/guni973/TPTS_web /usr/src/TPTS_web
+RUN git clone https://github.com/marron-akanishi/TPTS_web /usr/src/TPTS_web
 WORKDIR /usr/src/TPTS_web/
 RUN git pull
 
