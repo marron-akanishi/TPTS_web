@@ -28,7 +28,10 @@ def get_list(path):
 # DBから詳細情報取得
 def get_detail(filename, dbfile):
     detail = {}
-    conn = sqlite3.connect(dbfile)
+    if os.path.exists(dbfile):
+        conn = sqlite3.connect(dbfile)
+    else:
+        return 0,0
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
     cur.execute("select count(filename) from list")
@@ -59,7 +62,7 @@ def get_detail(filename, dbfile):
 def index():
     # index.html をレンダリングする
     global filelist
-    filelist = [path.split(os.sep)[1].split('.')[0] for path in glob.glob("collect/*.db")]
+    filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("collect/*.db")])
     return flask.render_template('index.html', dblist=filelist, select=filelist[-1])
 
 # /list にアクセスしたときの処理
@@ -96,4 +99,3 @@ def image_detail():
 if __name__ == '__main__':
     app.debug = True # デバッグモード有効化
     app.run(host='0.0.0.0') # どこからでもアクセス可能に
-
