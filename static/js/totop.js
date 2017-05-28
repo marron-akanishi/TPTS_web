@@ -1,9 +1,12 @@
 $(function() {
   // 「TOPに戻る」ボタンがクリックされた時の動きを指定します。
   $("#scroll_to_top").click(function() {
-    // ページの一番上まで、アニメーション付きでスクロールさせます。
-    // アニメーションの時間は300ミリ秒で、一定の速度（linear）で動かします。
-    $('body, html').animate({scrollTop: 0}, 300, 'linear');
+    window.scrollTo(0,0);
+  });
+
+  // 「一番下へ」ボタンがクリックされた時の動きを指定します。
+  $("#scroll_to_bottom").click(function() {
+    window.scrollTo(0,document.body.scrollHeight);
   });
 
   // 関数を変数「changeButtonState」に入れておきます。
@@ -13,9 +16,6 @@ $(function() {
 
     // 縦にどれだけスクロールしたかを取得します。
     var scrollTop = $(window).scrollTop();
-
-    // ウィンドウの縦幅を取得します。
-    var windowHeight = $(window).height();
 
     if (scrollTop != 0) {
       // ウィンドウの縦幅以上にスクロールしていた、
