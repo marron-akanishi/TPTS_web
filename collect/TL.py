@@ -48,8 +48,8 @@ class StreamListener(tp.StreamListener):
 
         # 画像がついていたとき
         if is_media:
-            # 自分のツイートは飛ばす
-            if status.user.screen_name != "marron_general" and status.user.screen_name != "marron_recbot":
+            # 自分のツイートは飛ばす(RT対策)
+            if status.user.screen_name != "marron_general":
                 for image in status_media['media']:
                     if image['type'] != 'photo':
                         break
@@ -69,7 +69,6 @@ class StreamListener(tp.StreamListener):
                         print("geted  : " + status.user.screen_name +"-" + filename)
                         continue
                     # 画像判定呼出
-                    self.all += 1
                     current_hash = None
                     current_hash, facex, facey, facew, faceh = detector.face_2d(temp_file, status.user.screen_name, filename)
                     if current_hash is not None:
@@ -116,15 +115,20 @@ class StreamListener(tp.StreamListener):
 
     def reset(self):
         """保存用のフォルダーを生成し、必要な変数を初期化する"""
-        self.fileno = 0
-        self.all = 0
+        dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),self.old_date.isoformat() + ".db")
+        if os.path.exists(dbpath):
+            print("DB file exist")
+            self.dbfile = sqlite3.connect(dbpath)
+            cur = self.dbfile.cursor()
+            cur.execute("select count(filename) from list")
+            self.fileno = cur.fetchone()[0]
+            cur.close()
+        else:
+            self.dbfile = sqlite3.connect(dbpath)
+            self.dbfile.execute("create table list (filename, image, username, url, fav, retweet, tags, time, facex, facey, facew, faceh)")
+            self.fileno = 0
         self.file_hash = []
         self.file_md5 = []
-        self.dbfile = sqlite3.connect(os.path.abspath(__file__).replace(os.path.basename(__file__),self.old_date.isoformat() + ".db"))
-        try:
-            self.dbfile.execute("create table list (filename, image, username, url, fav, retweet, tags, time, facex, facey, facew, faceh)")
-        except:
-            None
 
 def main():
     """メイン関数"""

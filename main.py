@@ -18,12 +18,12 @@ def get_list(path):
     cur = conn.cursor()
     cur.execute("select count(filename) from list")
     count = cur.fetchone()[0]
-    cur.execute( "select * from list" )
+    cur.execute("select * from list")
     for row in cur:
         images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
     cur.close()
     conn.close()
-    return images,count
+    return sorted(images, key=lambda id: id['id']),count
 
 # DBから詳細情報取得
 def get_detail(filename, dbfile):
