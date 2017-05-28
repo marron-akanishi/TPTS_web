@@ -1,8 +1,9 @@
 # TPTS web
 
 ## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
-localhost:5050にポートフォワードしている。
-/etc/localtimeにバインドして、JST対応
+localhost:5050にポートフォワードしている。  
+/etc/localtimeにバインドして、JST対応  
+collect/にoauth.pyを追加しておくこと(下記参照)  
 ```bash
 # docker build -t tpts .
 # docker run -d -p 5050:5000 -ti -v /etc/localtime:/etc/localtime:ro tpts
@@ -52,7 +53,7 @@ $ sudo dnf install python3 python3-pip git cmake gcc boost
 
 
 ```bash
-$ git clone https://github.com/guni973/TPTS_web
+$ git clone https://github.com/marron-akanishi/TPTS_web
 $ cd TPTS_web
 $ python3 -m venv venv
 $ source venv/bin/activate
