@@ -88,6 +88,10 @@ def index():
     filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("collect/*.db")])
     return flask.render_template('index.html', dblist=filelist, select=filelist[-1])
 
+@app.route('/about')
+def about():
+    return flask.render_template('about.html')
+
 # /list にアクセスしたときの処理
 @app.route('/list', methods=['GET'])
 def image_list():

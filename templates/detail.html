@@ -2,7 +2,7 @@
 {% block control %}
 <script src="/static/js/form.js"></script>
 <div class="container">
-  <input type="button" class="btn btn-primary" onclick="location.href='/list?date={{date}}#{{data.id}}'" value="リストに戻る">
+  <input type="button" class="btn btn-primary" onclick="location.href='/list?date={{date}}#{{data.id}}'" value="画像一覧に戻る">
   {% if data.id-1 >= 0 %}
     <button id="prev" class="btn btn-default" onclick="location.href='/list/detail?date={{date}}&id={{data.id-1}}'">＜</button>
   {% else %}

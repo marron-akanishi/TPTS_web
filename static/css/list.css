@@ -29,10 +29,10 @@
 }
 
 .trim {
-    overflow: hidden;
-    width: 200px;/* トリミングしたい枠の幅 */
-    height: 200px;/* トリミングしたい枠の高さ */
-    position: relative;
+  overflow: hidden;
+  width: 200px;/* トリミングしたい枠の幅 */
+  height: 200px;/* トリミングしたい枠の高さ */
+  position: relative;
 }
 
 .trim img {

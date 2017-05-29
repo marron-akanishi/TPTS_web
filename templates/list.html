@@ -6,6 +6,7 @@
 <div class="container-fluid">
   <p>件数 : {{count}}</p>
   {% for detail in filelist %}
+  <div style="display:inline;">
     <button onclick="location.href='/list/detail?date={{select}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
       <div class="trim" id="{{detail.id}}">
         <img data-original="{{detail.image}}" width="200" height="200" />
@@ -14,6 +15,7 @@
         {% endif %}
       </div>
     </button>
+  </div>
   {% endfor %}
 </div>
 <script>
