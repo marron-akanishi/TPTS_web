@@ -16,20 +16,17 @@ def get_list(path):
     if os.path.exists(path):
         conn = sqlite3.connect(path)
     else:
-        return -1,-1
-    try:
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cur.execute("select count(filename) from list")
-        count = cur.fetchone()[0]
-        cur.execute( "select * from list" )
-        for row in cur:
-            images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
-        cur.close()
-        conn.close()
-        return images,count
-    except:
-        return -1,-1
+        raise ValueError
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("select count(filename) from list")
+    count = cur.fetchone()[0]
+    cur.execute( "select * from list order by filename" )
+    for row in cur:
+        images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
+    cur.close()
+    conn.close()
+    return images,count
 
 # DBからIDで検索
 def search_db(userid, dbfile):
@@ -37,20 +34,17 @@ def search_db(userid, dbfile):
     if os.path.exists(dbfile):
         conn = sqlite3.connect(dbfile)
     else:
-        return -1,-1
-    try:
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cur.execute("select count(filename) from list where username like '%" + userid + "%'")
-        count = cur.fetchone()[0]
-        cur.execute( "select * from list where username like '%" + userid + "%'" )
-        for row in cur:
-            images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
-        cur.close()
-        conn.close()
-        return images,count
-    except:
-        return -1,-1
+        raise ValueError
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("select count(filename) from list where username like '%" + userid + "%'")
+    count = cur.fetchone()[0]
+    cur.execute( "select * from list where username like '%" + userid + "%'" )
+    for row in cur:
+        images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
+    cur.close()
+    conn.close()
+    return images,count
 
 # DBから詳細情報取得
 def get_detail(filename, dbfile):
@@ -58,34 +52,32 @@ def get_detail(filename, dbfile):
     if os.path.exists(dbfile):
         conn = sqlite3.connect(dbfile)
     else:
-        return -1,-1,-1
-    try:
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cur.execute("select count(filename) from list")
-        count = int(cur.fetchone()[0])-1
-        cur.execute( "select * from list where filename = '" + str(filename).zfill(5) + "'" )
-        row = cur.fetchone()
-        detail = {
-            "id":int(row["filename"]),
-            "image":row["image"],
-            "url":row["url"],
-            "userid":row["username"],
-            "fav":row["fav"],
-            "rt":row["retweet"],
-            "tags":row["tags"][1:-1],
-            "time":row["time"],
-            "facex":row["facex"],
-            "facey":row["facey"],
-            "facew":row["facew"],
-            "faceh":row["faceh"]
-        }
-        cur.close()
-        conn.close()
-        temp, idinfo = search_db(detail["userid"], dbfile)
-        return detail,count,idinfo
-    except:
-        return -1,-1,-1
+        raise ValueError
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("select count(filename) from list")
+    count = int(cur.fetchone()[0])-1
+    cur.execute( "select * from list where filename = '" + str(filename).zfill(5) + "'" )
+    row = cur.fetchone()
+    detail = {
+        "id":int(row["filename"]),
+        "image":row["image"],
+        "url":row["url"],
+        "userid":row["username"],
+        "fav":row["fav"],
+        "rt":row["retweet"],
+        "tags":row["tags"][1:-1],
+        "time":row["time"],
+        "facex":row["facex"],
+        "facey":row["facey"],
+        "facew":row["facew"],
+        "faceh":row["faceh"]
+    }
+    cur.close()
+    conn.close()
+    temp, idinfo = search_db(detail["userid"], dbfile)
+    return detail,count,idinfo
+
 
 # ここからウェブアプリケーション用のルーティングを記述
 # index にアクセスしたときの処理
@@ -97,15 +89,16 @@ def index():
     return flask.render_template('index.html', dblist=filelist, select=filelist[-1])
 
 # /list にアクセスしたときの処理
-@app.route('/list', methods=['GET', 'POST'])
+@app.route('/list', methods=['GET'])
 def image_list():
     global filelist
-    if flask.request.method == 'POST':
+    if flask.request.method == 'GET':
         # リクエストフォーム取得して
-        date = flask.request.form['date']
+        date = flask.request.args.get('date')
         # 画像一覧生成
-        images,count = get_list("collect/" + date + ".db")
-        if count == -1:
+        try:
+            images,count = get_list("collect/" + date + ".db")
+        except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
         return flask.render_template('list.html',
@@ -115,7 +108,7 @@ def image_list():
         return flask.redirect(flask.url_for('index'))
 
 # /search にアクセスしたとき
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET'])
 def image_search():
     global filelist
     if flask.request.method == 'GET':
@@ -123,8 +116,9 @@ def image_search():
         date = flask.request.args.get('date')
         userid = flask.request.args.get('userid')
         # 画像一覧生成
-        images,count = search_db(userid, "collect/" + date + ".db")
-        if count == -1:
+        try:
+            images,count = search_db(userid, "collect/" + date + ".db")
+        except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
         return flask.render_template('list.html',
@@ -134,15 +128,16 @@ def image_search():
         return flask.redirect(flask.url_for('index'))
 
 # /list/detail にアクセスしたときの処理
-@app.route('/list/detail', methods=['GET', 'POST'])
+@app.route('/list/detail', methods=['GET'])
 def image_detail():
     if flask.request.method == 'GET':
         # リクエストフォーム取得して
         image_id = flask.request.args.get('id')
         date = flask.request.args.get('date')
         # 画像情報辞書
-        detail,count,idinfo = get_detail(int(image_id), "collect/"+date+".db")
-        if count <= 0:
+        try:
+            detail,count,idinfo = get_detail(int(image_id), "collect/"+date+".db")
+        except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
         return flask.render_template('detail.html', 
@@ -150,6 +145,10 @@ def image_detail():
     else:
         # エラーなどでリダイレクトしたい場合はこんな感じで
         return flask.redirect(flask.url_for('index'))
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return flask.render_template('error.html')
 
 if __name__ == '__main__':
     app.debug = True # デバッグモード有効化

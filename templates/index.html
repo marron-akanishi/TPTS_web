@@ -2,7 +2,7 @@
 {% block control %}
 <div class="container-fluid">
   {% if dblist %}
-  <form action="/list" method="post" class="form-inline" style="display:inline;">
+  <form action="/list" method="get" class="form-inline" style="display:inline;">
     <label for="date">日付: </label>
     <select id="date" name="date" class="form-control">
       {% for dbfile in dblist %}
@@ -19,7 +19,7 @@
   <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     <span class="sr-only">エラー:</span>
-    データベースが存在しません
+    データベース一覧作成時にエラーが発生しました
   </div>
   {% endif %}
 </div>

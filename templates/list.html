@@ -1,30 +1,4 @@
-{% extends "layout.html" %}
-{% block control %}
-<div class="container-fluid">
-  <form action="/list" method="post" class="form-inline" style="display:inline;">
-    <label for="date">日付: </label>
-    <select id="date" name="date" class="form-control">
-      {% for dbfile in dblist %}
-        {% if dbfile == select %}
-          <option value="{{dbfile}}" selected>{{dbfile}}
-        {% else %}
-          <option value="{{dbfile}}">{{dbfile}}
-        {% endif %}
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-primary">OK</button>
-  </form>
-  <!--<form action="/search" method="get" class="form-inline col-xs-offset-1" style="display:inline;">
-    <input type="hidden" name="date" value="{{select}}">
-    <label for="searchbox">ID検索: </label>
-    <div class="input-group">
-      <div class="input-group-addon">@</div>
-      <input type="text" class="form-control" name="userid" id="searchid" placeholder="ユーザーID">
-    </div>
-    <button type="submit" class="btn btn-primary">検索</button>
-  </form>-->
-</div>
-{% endblock %}
+{% extends "index.html" %}
 {% block list %}
 <link href="/static/css/list.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/totop.js"></script>
@@ -32,18 +6,14 @@
 <div class="container-fluid">
   <p>件数 : {{count}}</p>
   {% for detail in filelist %}
-    <form action="/list/detail" method="get" style="display:inline;">
-      <input type="hidden" name="date" value="{{select}}">
-      <input type="hidden" name="id" value="{{detail.id}}">
-      <button type="submit" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
-        <div class="trim" id="{{detail.id}}">
-          <img data-original="{{detail.image}}" width="200" height="200" />
-          {% if detail.tags != "" %}
-            <span class="badge">ハッシュタグ</span>
-          {% endif %}
-        </div>
-      </button>
-    </form>
+    <button onclick="location.href='/list/detail?date={{select}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
+      <div class="trim" id="{{detail.id}}">
+        <img data-original="{{detail.image}}" width="200" height="200" />
+        {% if detail.tags != "" %}
+          <span class="badge">ハッシュタグ</span>
+        {% endif %}
+      </div>
+    </button>
   {% endfor %}
 </div>
 <script>

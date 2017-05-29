@@ -2,22 +2,17 @@
 {% block control %}
 <script src="/static/js/form.js"></script>
 <div class="container">
-  <form id="back" action="/list#{{data.id}}" method="post" class="form-inline" style="display:inline;">
-    <button class="btn btn-primary" type="submit" name="date" value="{{date}}">リストに戻る</button>
-  </form>
-  <form id="move" action="/list/detail" method="get" class="form-inline col-xs-offset-1" style="display:inline;">
-    <input type="hidden" name="date" value="{{date}}">
-    {% if data.id-1 >= 0 %}
-      <button id="prev" class="btn btn-default" type="submit" name="id" value="{{data.id - 1}}">＜</button>
-    {% else %}
-      <button class="btn btn-default" disabled>＜</button>
-    {% endif %}
-    {% if data.id+1 <= max %}
-      <button id="next" class="btn btn-default" type="submit" name="id" value="{{data.id + 1}}">＞</button>
-    {% else %}
-      <button class="btn btn-default" disabled>＞</button>
-    {% endif %}
-  </form>
+  <input type="button" class="btn btn-primary" onclick="location.href='/list?date={{date}}#{{data.id}}'" value="リストに戻る">
+  {% if data.id-1 >= 0 %}
+    <button id="prev" class="btn btn-default" onclick="location.href='/list/detail?date={{date}}&id={{data.id-1}}'">＜</button>
+  {% else %}
+    <button class="btn btn-default" disabled>＜</button>
+  {% endif %}
+  {% if data.id+1 <= max %}
+    <button id="next" class="btn btn-default" onclick="location.href='/list/detail?date={{date}}&id={{data.id+1}}'">＞</button>
+  {% else %}
+    <button class="btn btn-default" disabled>＞</button>
+  {% endif %}
   <form id="idsel" action="/list/detail" method="get" class="form-inline col-xs-offset-1" style="display:inline;">
     <input type="hidden" name="date" value="{{date}}">
     <label for="idtext">ID指定:</label>
@@ -43,7 +38,7 @@
       <td>ユーザーID</td>
       <td>
         {% if idcount != 1 %}
-        <a href="../../search?date={{date}}&userid={{data.userid}}" data-toggle="tooltip" data-placement="right" title="同一IDの画像が{{idcount}}枚あります">@{{data.userid}}</a>
+        <a href="/search?date={{date}}&userid={{data.userid}}" data-toggle="tooltip" data-placement="right" title="同一IDの画像が{{idcount}}枚あります">@{{data.userid}}</a>
         {% else %}
         @{{data.userid}}
         {% endif %}
