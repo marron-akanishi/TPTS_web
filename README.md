@@ -1,4 +1,5 @@
-# TPTS web
+# TPTS web  
+Twitterのタイムラインに流れてきた画像から二次元画像だけを自動収集  
 
 ## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
 localhost:5050にポートフォワードしている。  
@@ -11,7 +12,7 @@ collect/にoauth.pyを追加しておくこと(下記参照)
 
 ## ローカルで使う場合
 
-oauth.pyをcollect/に追加
+oauth.pyをcollect/に追加(TwitterのAPIキーを記載)  
 ```python
 # oauth.py
 import tweepy as tp
