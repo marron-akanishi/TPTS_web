@@ -49,7 +49,7 @@ class StreamListener(tp.StreamListener):
         # 画像がついていたとき
         if is_media:
             # 自分のツイートは飛ばす(RT対策)
-            if status.user.screen_name != "marron_general":
+            if status.user.screen_name != self.api.me().screen_name:
                 for image in status_media['media']:
                     if image['type'] != 'photo':
                         break
@@ -107,10 +107,10 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
-                            # print("saved  : " + status.user.screen_name + "-" + filename)
-                            # if tags != []:
-                            #    print("  tags : " + str(tags))
-                            sef.fileno += 1
+                            print("saved  : " + status.user.screen_name + "-" + filename)
+                            if tags != []:
+                               print("  tags : " + str(tags))
+                            self.fileno += 1
                     temp_file = None
 
     def reset(self):
@@ -136,15 +136,15 @@ def main():
     stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
     print('Start Streaming!')
     while True:
-        # try:
-        stream.userstream()
-        # except KeyboardInterrupt:
-        #     exit()
-        # except UnicodeEncodeError as err:
-        #     print("UnicodeEncodeError: {0}".format(err))
-        # except:
-        #     print('UserStream Error')
-        #     time.sleep(60)
+        try:
+            stream.userstream()
+        except KeyboardInterrupt:
+            exit()
+        except UnicodeEncodeError as err:
+            print("UnicodeEncodeError: {0}".format(err))
+        except:
+            print('UserStream Error')
+            time.sleep(60)
 
 if __name__ == '__main__':
     main()

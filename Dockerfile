@@ -2,6 +2,11 @@ FROM base/archlinux
 
 MAINTAINER guni973
 
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
 RUN pacman -Syyu  --noconfirm
 RUN pacman-db-upgrade
 RUN pacman -S     --noconfirm base base-devel && \
