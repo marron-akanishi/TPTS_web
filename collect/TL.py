@@ -136,15 +136,15 @@ def main():
     stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
     print('Start Streaming!')
     while True:
-        try:
-            stream.userstream()
-        except KeyboardInterrupt:
-            exit()
-        except UnicodeEncodeError as err:
-            print("UnicodeEncodeError: {0}".format(err))
-        except:
-            print('UserStream Error')
-            time.sleep(60)
+        # try:
+        stream.userstream()
+        # except KeyboardInterrupt:
+        #     exit()
+        # except UnicodeEncodeError as err:
+        #     print("UnicodeEncodeError: {0}".format(err))
+        # except:
+        #     print('UserStream Error')
+        #     time.sleep(60)
 
 if __name__ == '__main__':
     main()
