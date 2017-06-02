@@ -49,7 +49,7 @@ class StreamListener(tp.StreamListener):
         # 画像がついていたとき
         if is_media:
             # 自分のツイートは飛ばす(RT対策)
-            if status.user.screen_name != "marron_general":
+            if status.user.screen_name != self.api.me().screen_name:
                 for image in status_media['media']:
                     if image['type'] != 'photo':
                         break
@@ -128,7 +128,7 @@ class StreamListener(tp.StreamListener):
 
 def main():
     """メイン関数"""
-    debug = True #デバッグモード
+    debug = False #デバッグモード
     auth = oauth.get_oauth()
     stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
     print('Start Streaming!')
