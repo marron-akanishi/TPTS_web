@@ -107,7 +107,7 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
-                            # print("saved  : " + status.user.screen_name + "-" + filename)
+                            print("saved  : " + status.user.screen_name + "-" + filename)
                             # if tags != []:
                             #    print("  tags : " + str(tags))
                             self.fileno += 1
