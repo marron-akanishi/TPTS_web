@@ -35,32 +35,33 @@ def get_oauth():
     return auth
 ```
 
-
-### Debian系の場合
+### 必要なツールの導入
+#### Debian系の場合
 ```bash
-$ sudo apt install python3 python3-pip git cmake gcc boost
+$ sudo apt install python3 python3-pip python3-venv git cmake gcc libboost-python-dev
 ```
 
-### RedHat系の場合
+#### RedHat系の場合
 ```bash
 $ sudo dnf install python3 python3-pip git cmake gcc boost
 ```
 
-### ArchLinuxの場合
+#### ArchLinuxの場合
 
 ```bash
 # pacman -S python python-pip git cmake gcc boost
 ```
 
-
+### 上記の作業で必要なツールを入れた後に以下を実行(Debian系でテスト)
 ```bash
 $ git clone https://github.com/marron-akanishi/TPTS_web
 $ cd TPTS_web
 $ python3 -m venv venv
 $ source venv/bin/activate
-(venv) $ sudo pip install -r requirements.txt
+(venv) $ pip install -r requirements.txt
 ```
 
+### スクリプトの実行
 #### コレクターの起動
 ```bash
 (venv)$ python3 collect/TL.py

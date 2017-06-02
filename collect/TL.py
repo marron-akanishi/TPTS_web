@@ -98,8 +98,6 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set image = '" + media_url + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set username = '" + status.user.screen_name + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set url = '" + url + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set fav = " + str(status.favorite_count) + " where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set retweet = " + str(status.retweet_count) + " where filename = '" + filename + "'")
                             self.dbfile.execute("update list set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set facex = '" + str(facex) + "' where filename = '" + filename + "'")
@@ -132,19 +130,21 @@ class StreamListener(tp.StreamListener):
 
 def main():
     """メイン関数"""
+    debug = False #デバッグモード
     auth = oauth.get_oauth()
     stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
     print('Start Streaming!')
-    while True:
-        try:
-            stream.userstream()
-        except KeyboardInterrupt:
-            exit()
-        except UnicodeEncodeError as err:
-            print("UnicodeEncodeError: {0}".format(err))
-        except:
-            print('UserStream Error')
-            time.sleep(60)
+    if debug:
+        stream.userstream()
+    else:
+        while True:
+            try:
+                stream.userstream()
+            except KeyboardInterrupt:
+                exit()
+            except:
+                print('UserStream Error')
+                time.sleep(60)
 
 if __name__ == '__main__':
     main()
