@@ -2,6 +2,11 @@ onload = function(){
     face_rect();
 };
 
+$('#detailtab a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+
 function face_rect() {
     var canvas = document.getElementById('image_canvas');
     if ( ! canvas || ! canvas.getContext ) {

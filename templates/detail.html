@@ -33,7 +33,6 @@
 <div class="container">
   <table class="table table-condensed">
     <tr><td>ID</td><td>{{data.id}}</td></tr>
-    <tr><td>ツイートURL</td><td><a href="{{data.url}}" target="_blank">{{data.url}}</a></td></tr>
     <tr>
       <td>ユーザーID</td>
       <td>
@@ -44,12 +43,21 @@
         {% endif %}
       </td>
     </tr>
-    <tr><td>いいね数</td><td>{{data.fav}}</td></tr>
-    <tr><td>リツイート数</td><td>{{data.rt}}</td></tr>
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
     <tr><td>取得時刻</td><td>{{data.time}}</td></tr>
   </table>
-  <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
+  <ul class="nav nav-tabs" id="detailtab" role="tablist">
+    <li role="presentation" class="active"><a href="#embed" aria-controls="embed" role="tab" data-toggle="tab">ツイート本体</a></li>
+    <li role="presentation"><a href="#face" aria-controls="face" role="tab" data-toggle="tab">顔検出位置</a></li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="embed">
+      {{html|safe}}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="face">
+      <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
+    </div>
+  </div>
 </div>
 <script>
   $('[data-toggle="tooltip"]').tooltip();

@@ -8,6 +8,7 @@ import flask
 
 # 自身の名称を app という名前でインスタンス化する
 app = flask.Flask(__name__)
+# session用のキー
 app.secret_key = "konokacyankawaii"
 
 # DB一覧
@@ -35,7 +36,6 @@ def about():
 # twitter認証ページ
 @app.route('/twitter_auth', methods=['GET'])
 def twitter_oauth():
-    """ 連携アプリ認証用URLにリダイレクト """
     # tweepy でアプリのOAuth認証を行う
     key = decodestring(CONSUMER_KEY.encode("utf8")).decode("ascii")
     secret = decodestring(CONSUMER_SECRET.encode("utf8")).decode("ascii")
@@ -101,14 +101,14 @@ def image_detail():
         # リクエストフォーム取得して
         image_id = flask.request.args.get('id')
         date = flask.request.args.get('date')
-        # 画像情報辞書
+        # 画像情報
         try:
-            detail,count,idinfo = dbreader.get_detail(int(image_id), "collect/"+date+".db")
+            detail,html,count,idinfo = dbreader.get_detail(int(image_id), "collect/"+date+".db")
         except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
         return flask.render_template('detail.html', 
-            data=detail, date=date, max=count, idcount=idinfo)
+            data=detail, html=html, date=date, max=count, idcount=idinfo)
     else:
         # エラーなどでリダイレクトしたい場合はこんな感じで
         return flask.redirect(flask.url_for('index'))

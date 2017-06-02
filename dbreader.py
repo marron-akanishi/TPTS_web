@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import requests
+import json
 
 # DBからファイルリスト取得
 def get_list(path):
@@ -55,8 +57,6 @@ def get_detail(filename, dbfile):
         "image":row["image"],
         "url":row["url"],
         "userid":row["username"],
-        "fav":row["fav"],
-        "rt":row["retweet"],
         "tags":row["tags"][1:-1],
         "time":row["time"],
         "facex":row["facex"],
@@ -67,4 +67,11 @@ def get_detail(filename, dbfile):
     cur.close()
     conn.close()
     temp, idinfo = search_db(detail["userid"], dbfile)
-    return detail,count,idinfo
+    html = get_html(detail["url"])
+    return detail,html,count,idinfo
+
+# 埋め込み用HTMLの取得(detail用)
+def get_html(url):
+    r = requests.get("https://publish.twitter.com/oembed", {"url":url})
+    data = json.loads(r.text)
+    return data["html"]
