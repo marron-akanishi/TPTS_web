@@ -107,10 +107,10 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
-                            print("saved  : " + status.user.screen_name + "-" + filename)
-                            if tags != []:
-                                print("  tags : " + str(tags))
-                            self.fileno += 1
+                            # print("saved  : " + status.user.screen_name + "-" + filename)
+                            # if tags != []:
+                            #    print("  tags : " + str(tags))
+                            sef.fileno += 1
                     temp_file = None
 
     def reset(self):
@@ -140,10 +140,11 @@ def main():
             stream.userstream()
         except KeyboardInterrupt:
             exit()
-        """
+        except UnicodeEncodeError as err:
+            print("UnicodeEncodeError: {0}".format(err))
         except:
             print('UserStream Error')
             time.sleep(60)
-        """
+
 if __name__ == '__main__':
     main()
