@@ -140,9 +140,10 @@ def main():
             stream.userstream()
         except KeyboardInterrupt:
             exit()
+        """
         except:
             print('UserStream Error')
             time.sleep(60)
-
+        """
 if __name__ == '__main__':
     main()
