@@ -110,7 +110,7 @@ class StreamListener(tp.StreamListener):
                             # print("saved  : " + status.user.screen_name + "-" + filename)
                             # if tags != []:
                             #    print("  tags : " + str(tags))
-                            sef.fileno += 1
+                            self.fileno += 1
                     temp_file = None
 
     def reset(self):
