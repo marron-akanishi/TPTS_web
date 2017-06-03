@@ -106,6 +106,8 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
                             print("saved  : " + status.user.screen_name + "-" + filename)
+                            if tags != []:
+                               print("  tags : " + str(tags))
                             self.fileno += 1
                     temp_file = None
 
