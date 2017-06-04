@@ -1,5 +1,5 @@
 # TPTS web  
-Twitterのタイムラインに流れてきた画像から二次元画像だけを自動収集  
+Twitterから二次元画像を効率よく回収しよう！  
 
 ## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
 localhost:5050にポートフォワードしている。  
