@@ -4,8 +4,6 @@ import hashlib
 import urllib
 import sqlite3
 import json
-import urllib.request
-from bs4 import BeautifulSoup
 import tweepy as tp
 import detector
 
@@ -112,13 +110,10 @@ def start(api, listurl):
     """メイン関数"""
     start = 1
     reset(api.me().id_str)
-    # URLからHTMLをパースする
-    req = urllib.request.Request(listurl, headers={'User-Agent' : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"}) 
-    con = urllib.request.urlopen(req)
-    soup = BeautifulSoup(con, "html.parser")
-    listid = soup.find('div',{'class':'follow-card'}).get('data-list-id')
-    owner = soup.find('a',{'class':'list-author'}).get('href')[1:]
+    listurl = listurl.replace("https://","")
+    owner = listurl.split("/")[1]
+    slug = listurl.split("/")[3]
     for i in range(0,2):
-        for status in api.list_timeline(owner=owner,slug=listid,since_id=start,count=200):
+        for status in api.list_timeline(owner_screen_name=owner,slug=slug,since_id=start,count=200):
             on_status(status)
             start = status.id

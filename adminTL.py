@@ -118,8 +118,8 @@ class StreamListener(tp.StreamListener):
 
     def reset(self):
         """保存用のフォルダーを生成し、必要な変数を初期化する"""
-        self.logfile = open(os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/log/"+self.old_date.isoformat() + ".log"),'w')
-        dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/admin/"+self.old_date.isoformat() + ".db")
+        self.logfile = open(os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/log/"+self.old_date.isoformat() + ".log"),'w')
+        dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/admin/" + self.old_date.isoformat() + ".db")
         if os.path.exists(dbpath):
             print("DB file exist",file=self.logfile)
             self.dbfile = sqlite3.connect(dbpath)
