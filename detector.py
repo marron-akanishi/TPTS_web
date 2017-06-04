@@ -5,7 +5,6 @@ import cv2
 try:
     from dlib import simple_object_detector
 except ImportError:
-    print("Please install dlib")
     exit()
 
 # 検出に必要なファイル
@@ -27,15 +26,12 @@ def face_2d(temp_file, userid, filename):
         faces = face_detector(image)
     except:
         faces = 0
-        print("Image type unsupported")
     # 二次元の顔が検出できた場合
     if len(faces) > 0:
         # 顔だけ切り出して目の検索
         for i, area in enumerate(faces):
             # 最小サイズの指定
             if area.bottom()-area.top() < image.shape[0]*0.075 or area.right()-area.left() < image.shape[1]*0.075:
-                print("SMALL  : " + userid + "-" + filename + "_" + str(i))
-                #print("DEBUG  : " + str(area.bottom()-area.top()) + "x" + str(area.right()-area.left()) + " - " + str(image.shape[0]) + "x" + str(image.shape[1]))
                 continue
             face = image[area.top():area.bottom(), area.left():area.right()]
             # 出来た画像から目を検出
@@ -46,13 +42,9 @@ def face_2d(temp_file, userid, filename):
                 facew.append(area.right()-area.left())
                 faceh.append(area.bottom()-area.top())
                 get = True
-            else:
-                print("NOEYE  : " + userid + "-" + filename + "_" + str(i))
-
     if get:
         return (dhash_calc(image), facex, facey, facew, faceh)
     else:
-        print("skiped : " + userid + "-" + filename)
         return (None, facex, facey, facew, faceh)
 
 

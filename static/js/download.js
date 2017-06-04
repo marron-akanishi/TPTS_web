@@ -1,25 +1,24 @@
 jQuery(function($){
     $("form").submit(function(event){
-        dispLoading("画像取得中...");
+        dispLoading("ダウンロード中...");
         event.preventDefault();
         var $form = $(this);
         $.ajax({
-            url: '/makelist',
+            url: '/download',
             type: 'POST',
             data: $form.serialize(),
             beforeSend: function(xhr, settings) {
                 // ボタンを無効化し、二重送信を防止
-                $(".btn").attr('disabled', true);
+                $("button").attr('disabled', true);
             },
             success:function(resultdata) {
-                location.href=resultdata
+                location.href = resultdata
             },
             error: function(error) {
-                alert('取得に失敗しました');
+                alert('ダウンロードに失敗しました');
             },
             complete : function(data) {
-                // Loadingイメージを消す
-                $(".btn").attr('disabled', false);
+                $("button").attr('disabled', false);
                 removeLoading();
             }
         });

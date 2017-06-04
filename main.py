@@ -1,4 +1,3 @@
-# Flask などの必要なライブラリをインポートする
 import os
 import glob
 import json
@@ -6,13 +5,16 @@ import DBreader as db
 import tweepy as tp
 import flask
 from functools import wraps
+import zipfile
+import urllib
+# TL回収用
+import homeTL
+import userTL
+import userlist
 
 # 自身の名称を app という名前でインスタンス化する
 app = flask.Flask(__name__)
 setting = json.load(open("setting.json"))
-
-# DB一覧
-filelist = []
 
 # 認証後に使用可能
 def tp_api():
@@ -98,100 +100,156 @@ def logout():
 
 # こっから下は認証が必要
 # ユーザーメニュー
-@app.route('/user')
+@app.route('/menu')
 @login_check
 def user_page():
-    return flask.render_template('user.html', admin=admin_check(), showadminTL=setting['AdminShow'])
-
-# モード切り替え
-@app.route('/user/<mode>')
-@login_check
-def user_getter(mode):
-    if mode == "admin":
-        if admin_check() or setting['AdminShow']:
-            global filelist
-            filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-            return flask.render_template('mode.html', mode=mode, dblist=filelist, select=filelist[-1])
-        else:
-            return flask.render_template('user.html')
-    return flask.render_template('mode.html', mode=mode)
+    if admin_check() or setting['AdminShow']:
+        filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
+    return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1])
 
 # ログページ
-@app.route('/user/admin/logs')
+@app.route('/admin/logs')
 @login_check
 def log_page():
-    return
+    if admin_check():
+        loglist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/log/*.log")])
+    else:
+        flask.redirect(flask.url_for('user_page'))
+    return flask.render_template('log.html', filelist=loglist)
+
+@app.route('/getlog', methods=['POST'])
+@login_check
+def get_log():
+    if admin_check():
+        filename = flask.request.form['date']
+        log = open("DB/log/{}.log".format(filename))
+        text = log.read()
+        log.close()
+    else:
+        flask.redirect(flask.url_for('user_page'))
+    if text == "":
+        text = "まだログは記録されていません"
+    return text
 
 # 共通ページ
 # 画像リストビュー生成
-@app.route('/getlist', methods=['POST'])
+@app.route('/makelist', methods=['POST'])
 @login_check
-def image_list():
-    date = 0
+def make_list():
     mode = flask.request.form['mode']
+    dbname = flask.session['userID']
     if mode == "homeTL":
-        pass
+        homeTL.start(tp_api())
     elif mode == "userTL":
-        pass
+        userid = flask.request.form['userid']
+        userTL.start(tp_api(),userid)
     elif mode == "list":
-        pass
+        url = flask.request.form['url']
+        userlist.start(tp_api(),url)
     elif mode == "admin":
         if admin_check() == False or setting['AdminShow'] == False:
                 return flask.render_template('error.html')
-        date = flask.request.form['date']
-        try:
-            images,count = db.get_list("DB/admin/" + date + ".db")
-        except:
-            return flask.render_template('error.html')
-    return flask.render_template('list.html', filelist=images, select=date, count=count, mode=mode, userID=flask.session['userID'])
+        dbname = flask.request.form['date']
+    return "/view?mode={}&dbname={}".format(mode,dbname)
 
-# 検索結果生成
-@app.route('/search', methods=['GET'])
+@app.route('/view', methods=['GET'])
 @login_check
-def image_search():
-    global filelist
-    if flask.request.method == 'GET':
-        # リクエストフォーム取得して
-        date = flask.request.args.get('date')
-        userid = flask.request.args.get('userid')
-        # 画像一覧生成
+def image_list():
+    mode = flask.request.args.get('mode')
+    dbname = flask.request.args.get('dbname')
+    if mode == "homeTL":
         try:
-            images,count = db.search_db(userid, "collect/" + date + ".db")
+            images,count = db.get_list("DB/user/" + dbname + ".db", "timeline")
         except:
             return flask.render_template('error.html')
-        # index.html をレンダリングする
-        return flask.render_template('list.html', dblist=filelist, select=date, filelist=images, count=count)
-    else:
-        # エラーなどでリダイレクトしたい場合はこんな感じで
-        return flask.redirect(flask.url_for('index'))
+    elif mode == "userTL":
+        try:
+            images,count = db.get_list("DB/user/" + dbname + ".db", "user")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "list":
+        try:
+            images,count = db.get_list("DB/user/" + dbname + ".db", "list")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "admin":
+        if admin_check() == False or setting['AdminShow'] == False:
+            return flask.render_template('error.html')
+        try:
+            images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
+        except:
+            return flask.render_template('error.html')
+    return flask.render_template('view.html', filelist=images, count=count, mode=mode, dbname=dbname)
 
 # 画像詳細
 @app.route('/detail', methods=['GET'])
 @login_check
 def image_detail():
-    if flask.request.method == 'GET':
-        mode = flask.request.args.get('mode')
-        userid = flask.request.args.get('user')
-        image_id = flask.request.args.get('id')
-        # ログインIDチェック
-        if userid != flask.session['userID']:
+    mode = flask.request.args.get('mode')
+    image_id = flask.request.args.get('id')
+    dbname = flask.request.args.get('dbname')
+    if mode == "homeTL":
+        try:
+            detail,html,idinfo = db.get_detail(int(image_id), "DB/user/"+dbname+".db", "timeline")
+        except:
             return flask.render_template('error.html')
-        if mode == "admin":
-            if admin_check() == False or setting['AdminShow'] == False:
-                return flask.render_template('error.html')
-            date = flask.request.args.get('date')
-            try:
-                detail,html,count,idinfo = db.get_detail(int(image_id), "DB/admin/"+date+".db")
-            except:
-                return flask.render_template('error.html')
-        else:
-            pass
-        # index.html をレンダリングする
-        return flask.render_template('detail.html', 
-            data=detail, html=html, date=date, max=count, idcount=idinfo)
-    else:
-        # エラーなどでリダイレクトしたい場合はこんな感じで
-        return flask.redirect(flask.url_for('index'))
+    elif mode == "userTL":
+        try:
+            detail,html,idinfo = db.get_detail(int(image_id), "DB/user/"+dbname+".db", "user")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "list":
+        try:
+            detail,html,idinfo = db.get_detail(int(image_id), "DB/user/"+dbname+".db", "list")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "admin":
+        if admin_check() == False or setting['AdminShow'] == False:
+            return flask.render_template('error.html')
+        try:
+            detail,html,idinfo = db.get_detail(int(image_id), "DB/admin/"+dbname+".db", "list")
+        except:
+            return flask.render_template('error.html')
+    # index.html をレンダリングする
+    return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo)
+
+# 一括ダウンロード
+@app.route('/download', methods=['POST'])
+@login_check
+def download():
+    #画像一覧取得
+    mode = flask.request.form['mode']
+    dbname = flask.request.form['dbname']
+    if mode == "homeTL":
+        try:
+            images,count = db.get_list("DB/user/" + dbname + ".db", "timeline")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "userTL":
+        try:
+            images,count = db.get_list("DB/user/" + dbname + ".db", "user")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "list":
+        try:
+            images,count = db.get_list("DB/user/" + dbname + ".db", "list")
+        except:
+            return flask.render_template('error.html')
+    elif mode == "admin":
+        if admin_check() == False or setting['AdminShow'] == False:
+            return flask.render_template('error.html')
+        try:
+            images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
+        except:
+            return flask.render_template('error.html')
+    zipdata = zipfile.ZipFile('static/zip/{}.zip'.format(flask.session['userID']),'w',zipfile.ZIP_DEFLATED)
+    for i,image in enumerate(images):
+        root, ext = os.path.splitext(image['image'])
+        temp_file = urllib.request.urlopen(image['image']+":orig").read()
+        zipdata.writestr(str(i).zfill(5)+ext,temp_file)
+        temp_file = None
+    zipdata.close()
+    return '/static/zip/{}.zip'.format(flask.session['userID'])
 
 # 認証不要ページ
 # このページについて

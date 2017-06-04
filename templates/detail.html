@@ -19,11 +19,7 @@
     <tr>
       <td>ユーザーID</td>
       <td>
-        {% if idcount != 1 %}
-        <a href="/search?date={{date}}&userid={{data.userid}}" data-toggle="tooltip" data-placement="right" title="同一IDの画像が{{idcount}}枚あります">@{{data.userid}}</a>
-        {% else %}
         @{{data.userid}}
-        {% endif %}
       </td>
     </tr>
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
@@ -38,6 +34,7 @@
       {{html|safe}}
     </div>
     <div role="tabpanel" class="tab-pane" id="face">
+      <label class="checkbox-inline"><input type="checkbox" id="facemode" checked>検出位置表示</label><br>
       <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
     </div>
   </div>

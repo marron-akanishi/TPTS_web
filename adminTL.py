@@ -32,6 +32,7 @@ class StreamListener(tp.StreamListener):
             self.old_date = now
             self.dbfile.commit()
             self.dbfile.close()
+            self.logfile.close()
             self.reset()
         # TweetがRTかどうか
         if hasattr(status, "retweeted_status"):
@@ -64,25 +65,27 @@ class StreamListener(tp.StreamListener):
                     try:
                         temp_file = urllib.request.urlopen(media_url).read()
                     except:
-                        print("Download Error")
+                        print("Download Error",file=self.logfile)
                         continue
                     # md5の取得
                     current_md5 = hashlib.md5(temp_file).hexdigest()
                     # すでに取得済みの画像は飛ばす
                     if current_md5 in self.file_md5:
-                        print("geted  : " + status.user.screen_name +"-" + filename)
+                        print("geted  : " + status.user.screen_name +"-" + filename,file=self.logfile)
                         continue
                     # 画像判定呼出
                     current_hash = None
                     current_hash, facex, facey, facew, faceh = detector.face_2d(temp_file, status.user.screen_name, filename)
-                    if current_hash is not None:
+                    if current_hash  is None:
+                        print("skiped  : " + status.user.screen_name +"-" + filename,file=self.logfile)
+                    else:
                         # すでに取得済みの画像は飛ばす
                         overlaped = False
                         for hash_key in self.file_hash:
                             check = int(hash_key,16) ^ int(current_hash,16)
                             count = bin(check).count('1')
                             if count < 7:
-                                print("geted  : " + status.user.screen_name +"-" + filename)
+                                print("geted  : " + status.user.screen_name +"-" + filename,file=self.logfile)
                                 overlaped = True
                                 break
                         # 画像情報保存
@@ -109,15 +112,16 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
-                            print("saved  : " + status.user.screen_name + "-" + filename)
+                            print("saved  : " + status.user.screen_name + "-" + filename,file=self.logfile)
                             self.fileno += 1
                     temp_file = None
 
     def reset(self):
         """保存用のフォルダーを生成し、必要な変数を初期化する"""
-        dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/"+self.old_date.isoformat() + ".db")
+        self.logfile = open(os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/log/"+self.old_date.isoformat() + ".log"),'w')
+        dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/admin/"+self.old_date.isoformat() + ".db")
         if os.path.exists(dbpath):
-            print("DB file exist")
+            print("DB file exist",file=self.logfile)
             self.dbfile = sqlite3.connect(dbpath)
             cur = self.dbfile.cursor()
             cur.execute("select count(filename) from list")
@@ -137,7 +141,10 @@ def main():
     stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
     print('Start Streaming!')
     if setting['Debug']:
-        stream.userstream()
+        try:
+            stream.userstream()
+        except KeyboardInterrupt:
+            exit()
     else:
         while True:
             try:

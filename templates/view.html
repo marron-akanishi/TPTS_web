@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block menu %}
+<link href="/static/css/loading.css" rel="stylesheet" type="text/css" />
+<script src="/static/js/download.js"></script>
+<div class="container-fluid">
+  <input type="button" class="btn btn-primary" onclick="location.href='/menu'" value="メニューに戻る">
+  <form class="form-inline" style="display:inline;">
+      <input type="hidden" name="mode" value={{mode}}>
+      <input type="hidden" name="dbname" value={{dbname}}>
+      <button type="submit" class="btn btn-primary">一括ダウンロード</button>
+  </form>
+</div>
+{% endblock menu %}
+{% block list %}
+<link href="/static/css/list.css" rel="stylesheet" type="text/css" />
+<script src="/static/js/totop.js"></script>
+<script src="/static/js/jquery.lazyload.min.js"></script>
+<div class="container-fluid">
+  <p>件数 : {{count}}</p>
+  {% for detail in filelist %}
+  <div style="display:inline;">
+    <button onclick="location.href='/detail?mode={{mode}}&dbname={{dbname}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
+      <div class="trim" id="{{detail.id}}">
+        <img data-original="{{detail.image}}" width="200" height="200" />
+        {% if detail.tags != "" %}
+          <span class="badge">ハッシュタグ</span>
+        {% endif %}
+      </div>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  $("img").lazyload();
+  $('[data-toggle="tooltip"]').tooltip();
+</script>
+<div id="scroll_to_top" class="button">
+  <p>トップに戻る</p>
+</div>
+<div id="scroll_to_bottom" class="button">
+  <p>最新の画像へ</p>
+</div>
+{% endblock list %}
