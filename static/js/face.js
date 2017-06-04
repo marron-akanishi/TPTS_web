@@ -31,7 +31,3 @@ function face_rect() {
         }
     }
 }
-
-function draw_image(){
-    
-}

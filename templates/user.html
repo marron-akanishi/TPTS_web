@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block menu %}
+<div class="container">
+	{% if admin %}
+		<div class="alert alert-success" role="alert">管理者として認証しました</div>
+	{% else %}
+    <div class="alert alert-success" role="alert">ユーザーとして認証しました</div>
+	{% endif %}
+  <h4>メニュー</h4>
+  <input type="button" class="btn btn-default" onclick="location.href='/user/homeTL'" value="ホームTL">
+  <input type="button" class="btn btn-default" onclick="location.href='/user/userTL'" value="単一ユーザーTL">
+  <input type="button" class="btn btn-default" onclick="location.href='/user/list'" value="リスト">
+  {% if admin or showadminTL %}
+    <input type="button" class="btn btn-default" onclick="location.href='/user/admin'" value="管理者TL">
+  {% endif %}
+  {% if admin %}
+    <input type="button" class="btn btn-default" onclick="location.href='/user/admin/log'" value="ログ確認">
+  {% endif %}
+  <input type="button" class="btn btn-danger" onclick="location.href='/logout'" value="ログアウト">
+</div>
+{% endblock menu %}
