@@ -7,6 +7,7 @@ import sqlite3
 import json
 import tweepy as tp
 import detector
+import threading
 
 def get_oauth(setting):
     """設定ファイルから各種キーを取得し、OAUTH認証を行う"""
@@ -65,19 +66,19 @@ class StreamListener(tp.StreamListener):
                     try:
                         temp_file = urllib.request.urlopen(media_url).read()
                     except:
-                        print("Download Error",file=self.logfile)
+                        self.logfile.write("Download Error\n")
                         continue
                     # md5の取得
                     current_md5 = hashlib.md5(temp_file).hexdigest()
                     # すでに取得済みの画像は飛ばす
                     if current_md5 in self.file_md5:
-                        print("geted  : " + status.user.screen_name +"-" + filename,file=self.logfile)
+                        self.logfile.write("geted  : " + status.user.screen_name + "-" + filename+"\n")
                         continue
                     # 画像判定呼出
                     current_hash = None
                     current_hash, facex, facey, facew, faceh = detector.face_2d(temp_file, status.user.screen_name, filename)
                     if current_hash  is None:
-                        print("skiped  : " + status.user.screen_name +"-" + filename,file=self.logfile)
+                        self.logfile.write("skiped  : " + status.user.screen_name +"-" + filename+"\n")
                     else:
                         # すでに取得済みの画像は飛ばす
                         overlaped = False
@@ -85,7 +86,7 @@ class StreamListener(tp.StreamListener):
                             check = int(hash_key,16) ^ int(current_hash,16)
                             count = bin(check).count('1')
                             if count < 7:
-                                print("geted  : " + status.user.screen_name +"-" + filename,file=self.logfile)
+                                self.logfile.write("geted  : " + status.user.screen_name +"-" + filename+"\n")
                                 overlaped = True
                                 break
                         # 画像情報保存
@@ -112,7 +113,7 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
-                            print("saved  : " + status.user.screen_name + "-" + filename,file=self.logfile)
+                            self.logfile.write("saved  : " + status.user.screen_name + "-" + filename+"\n")
                             self.fileno += 1
                     temp_file = None
 
@@ -121,7 +122,7 @@ class StreamListener(tp.StreamListener):
         self.logfile = open(os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/log/"+self.old_date.isoformat() + ".log"),'w')
         dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/admin/" + self.old_date.isoformat() + ".db")
         if os.path.exists(dbpath):
-            print("DB file exist",file=self.logfile)
+            self.logfile.write("DB file exist\n")
             self.dbfile = sqlite3.connect(dbpath)
             cur = self.dbfile.cursor()
             cur.execute("select count(filename) from list")
@@ -134,26 +135,26 @@ class StreamListener(tp.StreamListener):
         self.file_hash = []
         self.file_md5 = []
 
-def main():
-    """メイン関数"""
-    setting = json.load(open("setting.json"))
-    auth = get_oauth(setting)
-    stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
-    print('Start Streaming!')
-    if setting['Debug']:
-        try:
-            stream.userstream()
-        except KeyboardInterrupt:
-            exit()
-    else:
-        while True:
+class TLThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+ 
+    def run(self):
+        setting = json.load(open("setting.json"))
+        auth = get_oauth(setting)
+        stream = tp.Stream(auth, StreamListener(tp.API(auth)), secure=True)
+        print('Start Streaming!')
+        if setting['Debug']:
             try:
                 stream.userstream()
             except KeyboardInterrupt:
                 exit()
-            except:
-                print('UserStream Error')
-                time.sleep(60)
-
-if __name__ == '__main__':
-    main()
+        else:
+            while True:
+                try:
+                    stream.userstream()
+                except KeyboardInterrupt:
+                    exit()
+                except:
+                    print('UserStream Error')
+                    time.sleep(60)

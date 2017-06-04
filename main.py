@@ -7,7 +7,9 @@ import flask
 from functools import wraps
 import zipfile
 import urllib
+import threading
 # TL回収用
+import adminTL
 import homeTL
 import userTL
 import userlist
@@ -263,6 +265,9 @@ def page_not_found(error):
     return flask.render_template('error.html')
 
 if __name__ == '__main__':
+    t1 = adminTL.TLThread()
+    t1.setDaemon(True)
+    t1.start()
     app.secret_key = setting['SecretKey']
     app.debug = setting['Debug'] # デバッグモード
     app.run(host='0.0.0.0') # どこからでもアクセス可能に

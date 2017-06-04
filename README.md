@@ -58,12 +58,6 @@ $ source venv/bin/activate
 ```
 
 ### スクリプトの実行
-#### コレクターの起動
-```bash
-(venv)$ python3 adminTL.py
-```
-
-#### ビュアーの起動
 ```bash
 (venv)$ python3 main.py
 ```

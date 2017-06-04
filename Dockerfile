@@ -22,5 +22,5 @@ RUN pip install -r requirements.txt
 RUN pip install dlib
 
 CMD git pull
-CMD python adminTL.py & python main.py
+CMD python main.py
 
