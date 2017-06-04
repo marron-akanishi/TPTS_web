@@ -1,4 +1,8 @@
-{% extends "index.html" %}
+{% if admin %}
+{% extends "admin.html" %}
+{% else %}
+{% extends "user.html" %}
+{% endif %}
 {% block list %}
 <link href="/static/css/list.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/totop.js"></script>

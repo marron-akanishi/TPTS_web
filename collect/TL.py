@@ -1,5 +1,3 @@
-# printで表示する状態情報は半角6文字以内にすること
-
 import os
 import time
 import datetime
@@ -106,8 +104,6 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
                             print("saved  : " + status.user.screen_name + "-" + filename)
-                            if tags != []:
-                               print("  tags : " + str(tags))
                             self.fileno += 1
                     temp_file = None
 
