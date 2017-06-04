@@ -105,7 +105,7 @@ def logout():
 def user_page():
     if admin_check() or setting['AdminShow']:
         filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-    return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1])
+    return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"])
 
 # ログページ
 @app.route('/admin/logs')
@@ -139,13 +139,13 @@ def make_list():
     mode = flask.request.form['mode']
     dbname = flask.session['userID']
     if mode == "homeTL":
-        homeTL.start(tp_api())
+        homeTL.start(tp_api(),setting["MaxCount"])
     elif mode == "userTL":
         userid = flask.request.form['userid']
-        userTL.start(tp_api(),userid)
+        userTL.start(tp_api(),userid,setting["MaxCount"])
     elif mode == "list":
         url = flask.request.form['url']
-        userlist.start(tp_api(),url)
+        userlist.start(tp_api(),url,setting["MaxCount"])
     elif mode == "admin":
         if admin_check() == False or setting['AdminShow'] == False:
                 return flask.render_template('error.html')
@@ -255,7 +255,7 @@ def download():
 # このページについて
 @app.route('/about')
 def about():
-    return flask.render_template('about.html')
+    return flask.render_template('about.html', count=setting["MaxCount"])
 
 # 404エラー
 @app.errorhandler(404)

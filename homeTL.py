@@ -106,11 +106,11 @@ def on_status(status):
                     fileno += 1
             temp_file = None
 
-def start(api):
+def start(api, count):
     """メイン関数"""
     start = 1
     reset(api.me().id_str)
-    for i in range(0,2):
-        for status in api.home_timeline(since_id=start,count=200):
+    for i in range(0,int(count/100)):
+        for status in api.home_timeline(since_id=start,count=100):
             on_status(status)
             start = status.id

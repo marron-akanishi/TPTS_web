@@ -25,6 +25,7 @@ setting_empty.jsonをsetting.jsonに変更(設定を記載)
         "Admin_Secret": "管理者のAccessTokenSecret",
         "Callback_URL": "http://{運営するドメイン}/authed(API管理ページでも指定)"
     },
+    "MaxCount": "一回で取得するツイート数(大きいと時間もリソースも食うので初期設定をおすすめします,100ずつ指定)",
     "ShowAdminTL": "管理者以外も管理者アカウントで回収した画像を見れるようにするかどうか",
     "Debug": "デバッグモード"
 }

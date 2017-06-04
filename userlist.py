@@ -106,14 +106,14 @@ def on_status(status):
                     fileno += 1
             temp_file = None
 
-def start(api, listurl):
+def start(api, listurl, count):
     """メイン関数"""
     start = 1
     reset(api.me().id_str)
     listurl = listurl.replace("https://","")
     owner = listurl.split("/")[1]
     slug = listurl.split("/")[3]
-    for i in range(0,2):
-        for status in api.list_timeline(owner_screen_name=owner,slug=slug,since_id=start,count=200):
+    for i in range(0,int(count/100)):
+        for status in api.list_timeline(owner_screen_name=owner,slug=slug,since_id=start,count=100):
             on_status(status)
             start = status.id
