@@ -2,7 +2,7 @@
 import os
 import glob
 from base64 import decodestring
-import dbreader
+import DBreader as db
 import tweepy
 import flask
 
@@ -64,7 +64,7 @@ def image_list():
         date = flask.request.args.get('date')
         # 画像一覧生成
         try:
-            images,count = dbreader.get_list("collect/" + date + ".db")
+            images,count = db.get_list("collect/" + date + ".db")
         except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
@@ -84,7 +84,7 @@ def image_search():
         userid = flask.request.args.get('userid')
         # 画像一覧生成
         try:
-            images,count = dbreader.search_db(userid, "collect/" + date + ".db")
+            images,count = db.search_db(userid, "collect/" + date + ".db")
         except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
@@ -103,7 +103,7 @@ def image_detail():
         date = flask.request.args.get('date')
         # 画像情報
         try:
-            detail,html,count,idinfo = dbreader.get_detail(int(image_id), "collect/"+date+".db")
+            detail,html,count,idinfo = db.get_detail(int(image_id), "collect/"+date+".db")
         except:
             return flask.render_template('error.html')
         # index.html をレンダリングする
