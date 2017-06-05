@@ -134,3 +134,12 @@ def gethomeTL(api, count):
         for status in api.home_timeline(since_id=start,count=100):
             on_status(status, "timeline")
             start = status.id
+
+def gethashtag(api, q_str, count):
+    """ハッシュタグ"""
+    start = 1
+    reset(api.me().id_str, "tag")
+    for i in range(0,int(count/100)):
+        for status in api.search(q="#" + q_str,lang="ja",rpp=100,since_id=start):
+            on_status(status, "tag")
+            start = status.id
