@@ -10,9 +10,7 @@ import urllib
 import threading
 # TL回収用
 import adminTL
-import homeTL
-import userTL
-import userlist
+import gettweet
 
 # 自身の名称を app という名前でインスタンス化する
 app = flask.Flask(__name__)
@@ -141,13 +139,13 @@ def make_list():
     mode = flask.request.form['mode']
     dbname = flask.session['userID']
     if mode == "homeTL":
-        homeTL.start(tp_api(),setting["MaxCount"])
+        gettweet.gethomeTL(tp_api(),setting["MaxCount"])
     elif mode == "userTL":
         userid = flask.request.form['userid']
-        userTL.start(tp_api(),userid,setting["MaxCount"])
+        gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
     elif mode == "list":
         url = flask.request.form['url']
-        userlist.start(tp_api(),url,setting["MaxCount"])
+        gettweet.getlist(tp_api(),url,setting["MaxCount"])
     elif mode == "admin":
         if admin_check() == False and setting['AdminShow'] == False:
                 return "/error.html"

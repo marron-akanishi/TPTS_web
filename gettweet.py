@@ -12,19 +12,19 @@ file_hash = []
 file_md5 = []
 dbfile = None
 
-def reset(filename):
+def reset(filename, mode):
     """保存用のフォルダーを生成し、必要な変数を初期化する"""
     global dbfile
     dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/user/"+ filename + ".db")
     dbfile = sqlite3.connect(dbpath)
     try:
-        dbfile.execute("drop table user")
+        dbfile.execute("drop table {}".format(mode))
         dbfile.execute("vacuum")
     except:
         None
-    dbfile.execute("create table user (filename, image, username, url, tags, time, facex, facey, facew, faceh)")
+    dbfile.execute("create table {} (filename, image, username, url, tags, time, facex, facey, facew, faceh)".format(mode))
 
-def on_status(status):
+def on_status(status, mode):
     """UserStreamから飛んできたStatusを処理する"""
     global fileno
     global file_hash
@@ -60,7 +60,6 @@ def on_status(status):
             try:
                 temp_file = urllib.request.urlopen(media_url).read()
             except:
-                print("Download Error")
                 continue
             # md5の取得
             current_md5 = hashlib.md5(temp_file).hexdigest()
@@ -92,25 +91,46 @@ def on_status(status):
                                 tags.append(hashtag['text'])
                     # データベースに保存
                     url = "https://twitter.com/" + status.user.screen_name + "/status/" + status.id_str
-                    dbfile.execute("insert into user(filename) values('" + filename + "')")
-                    dbfile.execute("update user set image = '" + media_url + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set username = '" + status.user.screen_name + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set url = '" + url + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set facex = '" + str(facex) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set facey = '" + str(facey) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set facew = '" + str(facew) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update user set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
+                    dbfile.execute("insert into "+mode+"(filename) values('" + filename + "')")
+                    dbfile.execute("update "+mode+" set image = '" + media_url + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set username = '" + status.user.screen_name + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set url = '" + url + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set facex = '" + str(facex) + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set facey = '" + str(facey) + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set facew = '" + str(facew) + "' where filename = '" + filename + "'")
+                    dbfile.execute("update "+mode+" set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                     dbfile.commit()
                     fileno += 1
             temp_file = None
 
-def start(api, screen_name, count):
-    """メイン関数"""
+def getuserTL(api, screen_name, count):
+    """ユーザーTL"""
     start = 1
-    reset(api.me().id_str)
+    reset(api.me().id_str,"user")
     for i in range(0,int(count/100)):
         for status in api.user_timeline(screen_name=screen_name,since_id=start,count=100):
-            on_status(status)
+            on_status(status, "user")
+            start = status.id
+
+def getlist(api, listurl, count):
+    """リスト"""
+    start = 1
+    reset(api.me().id_str, "list")
+    listurl = listurl.replace("https://","")
+    owner = listurl.split("/")[1]
+    slug = listurl.split("/")[3]
+    for i in range(0,int(count/100)):
+        for status in api.list_timeline(owner_screen_name=owner,slug=slug,since_id=start,count=100):
+            on_status(status, "list")
+            start = status.id
+
+def gethomeTL(api, count):
+    """ホームTL"""
+    start = 1
+    reset(api.me().id_str, "timeline")
+    for i in range(0,int(count/100)):
+        for status in api.home_timeline(since_id=start,count=100):
+            on_status(status, "timeline")
             start = status.id
