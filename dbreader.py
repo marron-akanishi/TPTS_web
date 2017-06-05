@@ -4,7 +4,7 @@ import requests
 import json
 
 # DBからファイルリスト取得
-def get_list(path):
+def get_list(path, table):
     images = []
     if os.path.exists(path):
         conn = sqlite3.connect(path)
@@ -12,9 +12,9 @@ def get_list(path):
         raise ValueError
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("select count(filename) from list")
+    cur.execute("select count(filename) from {}".format(table))
     count = cur.fetchone()[0]
-    cur.execute( "select * from list order by filename" )
+    cur.execute( "select * from {} order by filename".format(table) )
     for row in cur:
         images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
     cur.close()
@@ -22,7 +22,7 @@ def get_list(path):
     return images,count
 
 # DBからIDで検索
-def search_db(userid, dbfile):
+def search_db(userid, dbfile, table):
     images = []
     if os.path.exists(dbfile):
         conn = sqlite3.connect(dbfile)
@@ -30,9 +30,9 @@ def search_db(userid, dbfile):
         raise ValueError
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("select count(filename) from list where username like '%" + userid + "%'")
+    cur.execute("select count(filename) from {} where username like '%{}%'".format(table,userid))
     count = cur.fetchone()[0]
-    cur.execute( "select * from list where username like '%" + userid + "%'" )
+    cur.execute( "select * from {} where username like '%{}%'".format(table,userid) )
     for row in cur:
         images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
     cur.close()
@@ -40,7 +40,7 @@ def search_db(userid, dbfile):
     return images,count
 
 # DBから詳細情報取得
-def get_detail(filename, dbfile):
+def get_detail(filename, dbfile, table):
     detail = {}
     if os.path.exists(dbfile):
         conn = sqlite3.connect(dbfile)
@@ -48,9 +48,7 @@ def get_detail(filename, dbfile):
         raise ValueError
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("select count(filename) from list")
-    count = int(cur.fetchone()[0])-1
-    cur.execute( "select * from list where filename = '" + str(filename).zfill(5) + "'" )
+    cur.execute( "select * from {} where filename = '{}'".format(table,str(filename).zfill(5)) )
     row = cur.fetchone()
     detail = {
         "id":int(row["filename"]),
@@ -66,9 +64,9 @@ def get_detail(filename, dbfile):
     }
     cur.close()
     conn.close()
-    temp, idinfo = search_db(detail["userid"], dbfile)
+    temp, idinfo = search_db(detail["userid"], dbfile, table)
     html = get_html(detail["url"])
-    return detail,html,count,idinfo
+    return detail,html,idinfo
 
 # 埋め込み用HTMLの取得(detail用)
 def get_html(url):

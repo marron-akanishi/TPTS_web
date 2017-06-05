@@ -1,7 +1,6 @@
-*.pyc
 *.db
-oauth.py
-
+*.zip
+setting.json
 
 # Created by https://www.gitignore.io/api/django
 

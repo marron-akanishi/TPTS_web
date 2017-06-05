@@ -1,26 +1,9 @@
 {% extends "layout.html" %}
-{% block control %}
-<script src="/static/js/form.js"></script>
+{% block menu %}
 <div class="container">
-  <input type="button" class="btn btn-primary" onclick="location.href='/list?date={{date}}#{{data.id}}'" value="画像一覧に戻る">
-  {% if data.id-1 >= 0 %}
-    <button id="prev" class="btn btn-default" onclick="location.href='/list/detail?date={{date}}&id={{data.id-1}}'">＜</button>
-  {% else %}
-    <button class="btn btn-default" disabled>＜</button>
-  {% endif %}
-  {% if data.id+1 <= max %}
-    <button id="next" class="btn btn-default" onclick="location.href='/list/detail?date={{date}}&id={{data.id+1}}'">＞</button>
-  {% else %}
-    <button class="btn btn-default" disabled>＞</button>
-  {% endif %}
-  <form id="idsel" action="/list/detail" method="get" class="form-inline col-xs-offset-1" style="display:inline;">
-    <input type="hidden" name="date" value="{{date}}">
-    <label for="idtext">ID指定:</label>
-    <input type="number" id="idtext" name="id" class="form-control" placeholder="0-{{max}}" min="0" max="{{max}}" required>
-    <button id="jump" class="btn btn-default" type="submit">ジャンプ</button>
-  </form>
+  <input type="button" class="btn btn-primary" onclick="history.back();" value="一覧に戻る">
 </div>
-{% endblock %}
+{% endblock menu %}
 {% block detail %}
 <script type="text/javascript">
   var facex = '{{data.facex}}';
@@ -36,11 +19,7 @@
     <tr>
       <td>ユーザーID</td>
       <td>
-        {% if idcount != 1 %}
-        <a href="/search?date={{date}}&userid={{data.userid}}" data-toggle="tooltip" data-placement="right" title="同一IDの画像が{{idcount}}枚あります">@{{data.userid}}</a>
-        {% else %}
         @{{data.userid}}
-        {% endif %}
       </td>
     </tr>
     <tr><td>ハッシュタグ</td><td>{{data.tags}}</td></tr>
@@ -63,4 +42,4 @@
 <script>
   $('[data-toggle="tooltip"]').tooltip();
 </script>
-{% endblock %}
+{% endblock detail %}

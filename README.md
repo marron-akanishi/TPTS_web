@@ -1,10 +1,10 @@
 # TPTS web  
-Twitterのタイムラインに流れてきた画像から二次元画像だけを自動収集  
+Twitterから二次元画像を効率よく回収しよう！  
 
 ## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
 localhost:5050にポートフォワードしている。  
 /etc/localtimeにバインドして、JST対応  
-collect/にoauth.pyを追加しておくこと(下記参照)  
+setting.jsonを追加しておくこと(下記参照)  
 ```bash
 # docker build -t tpts .
 # docker run -d -p 5050:5000 -ti -v /etc/localtime:/etc/localtime:ro tpts
@@ -12,27 +12,23 @@ collect/にoauth.pyを追加しておくこと(下記参照)
 
 ## ローカルで使う場合
 
-oauth.pyをcollect/に追加(TwitterのAPIキーを記載)  
-```python
-# oauth.py
-import tweepy as tp
-
-oauth_keys = {
-    'CONSUMMER_KEY' : '',
-    'CONSUMMER_SECRET' : '',
-    'ACCESS_TOKEN_KEY' : '',
-    'ACCESS_TOKEN_SECRET' : ''
+setting_empty.jsonをsetting.jsonに変更(設定を記載)  
+設定を以下の通り 
+```json
+{
+    "SecretKey": "Sessionを保存する際に使用するキー(ランダム文字列)",
+    "AdminID": "管理者となるユーザーのTwitterID",
+    "twitter_API": {
+        "CK": "TwitterAPI(ConsumerKey)",
+        "CS": "TwitterAPI(ConsumerSecret)",
+        "Admin_Key": "管理者のAccessToken(API管理ページで生成)",
+        "Admin_Secret": "管理者のAccessTokenSecret",
+        "Callback_URL": "http://{運営するドメイン}/authed(API管理ページでも指定)"
+    },
+    "MaxCount": "一回で取得するツイート数(大きいと時間もリソースも食うので初期設定をおすすめします,100ずつ指定)",
+    "ShowAdminTL": "管理者以外も管理者アカウントで回収した画像を見れるようにするかどうか",
+    "Debug": "デバッグモード"
 }
-
-def get_oauth():
-    """oauth_keysから各種キーを取得し、OAUTH認証を行う"""
-    consumer_key, consumer_secret = \
-        oauth_keys['CONSUMMER_KEY'], oauth_keys['CONSUMMER_SECRET']
-    access_key, access_secret = \
-        oauth_keys['ACCESS_TOKEN_KEY'], oauth_keys['ACCESS_TOKEN_SECRET']
-    auth = tp.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_key, access_secret)
-    return auth
 ```
 
 ### 必要なツールの導入
@@ -62,12 +58,6 @@ $ source venv/bin/activate
 ```
 
 ### スクリプトの実行
-#### コレクターの起動
-```bash
-(venv)$ python3 collect/TL.py
-```
-
-#### ビュアーの起動
 ```bash
 (venv)$ python3 main.py
 ```
