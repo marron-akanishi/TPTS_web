@@ -1,3 +1,4 @@
+# ajaxはPOST、それ以外はGET
 import os
 import glob
 import json
@@ -138,15 +139,15 @@ def get_log():
 def make_list():
     mode = flask.request.form['mode']
     dbname = flask.session['userID']
-    if mode == "homeTL":
+    if mode == "timeline":
         gettweet.gethomeTL(tp_api(),setting["MaxCount"])
-    elif mode == "userTL":
+    elif mode == "user":
         userid = flask.request.form['userid']
         gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
     elif mode == "list":
         url = flask.request.form['url']
         gettweet.getlist(tp_api(),url,setting["MaxCount"])
-    elif mode == "hashtag":
+    elif mode == "tag":
         hashtag = flask.request.form['hashtag']
         gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
     elif mode == "admin":
@@ -202,8 +203,8 @@ def download():
     try:
         if mode == "admin":
             if admin_check() == False and setting['AdminShow'] == False:
-                return flask.render_template('error.html')
-            dbname = flask.request.args.get('dbname')
+                return "/error.html"
+            dbname = flask.request.form['dbname']
             images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
         else:
             images,count = db.get_list("DB/user/" + dbname + ".db", mode)
