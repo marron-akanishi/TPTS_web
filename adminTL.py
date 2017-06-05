@@ -66,19 +66,19 @@ class StreamListener(tp.StreamListener):
                     try:
                         temp_file = urllib.request.urlopen(media_url).read()
                     except:
-                        self.logfile.write("Download Error\n")
+                        self.logfile.write("Download Error<br>\n")
                         continue
                     # md5の取得
                     current_md5 = hashlib.md5(temp_file).hexdigest()
                     # すでに取得済みの画像は飛ばす
                     if current_md5 in self.file_md5:
-                        self.logfile.write("geted  : " + status.user.screen_name + "-" + filename+"\n")
+                        self.logfile.write("geted  : " + status.user.screen_name + "-" + filename+"<br>\n")
                         continue
                     # 画像判定呼出
                     current_hash = None
                     current_hash, facex, facey, facew, faceh = detector.face_2d(temp_file, status.user.screen_name, filename)
                     if current_hash  is None:
-                        self.logfile.write("skiped  : " + status.user.screen_name +"-" + filename+"\n")
+                        self.logfile.write("skiped : " + status.user.screen_name +"-" + filename+"<br>\n")
                     else:
                         # すでに取得済みの画像は飛ばす
                         overlaped = False
@@ -86,7 +86,7 @@ class StreamListener(tp.StreamListener):
                             check = int(hash_key,16) ^ int(current_hash,16)
                             count = bin(check).count('1')
                             if count < 7:
-                                self.logfile.write("geted  : " + status.user.screen_name +"-" + filename+"\n")
+                                self.logfile.write("geted  : " + status.user.screen_name +"-" + filename+"<br>\n")
                                 overlaped = True
                                 break
                         # 画像情報保存
@@ -113,16 +113,16 @@ class StreamListener(tp.StreamListener):
                             self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
                             self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
                             self.dbfile.commit()
-                            self.logfile.write("saved  : " + status.user.screen_name + "-" + filename+"\n")
+                            self.logfile.write("saved  : " + status.user.screen_name + "-" + filename+"<br>\n")
                             self.fileno += 1
                     temp_file = None
 
     def reset(self):
         """保存用のフォルダーを生成し、必要な変数を初期化する"""
-        self.logfile = open(os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/log/"+self.old_date.isoformat() + ".log"),'w')
+        self.logfile = open(os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/log/"+self.old_date.isoformat() + ".log"),'a')
         dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"DB/admin/" + self.old_date.isoformat() + ".db")
         if os.path.exists(dbpath):
-            self.logfile.write("DB file exist\n")
+            self.logfile.write("DB file exist<br>\n")
             self.dbfile = sqlite3.connect(dbpath)
             cur = self.dbfile.cursor()
             cur.execute("select count(filename) from list")

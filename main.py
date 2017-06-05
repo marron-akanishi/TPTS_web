@@ -149,8 +149,8 @@ def make_list():
         url = flask.request.form['url']
         userlist.start(tp_api(),url,setting["MaxCount"])
     elif mode == "admin":
-        if admin_check() == False or setting['AdminShow'] == False:
-                return flask.render_template('error.html')
+        if admin_check() == False and setting['AdminShow'] == False:
+                return "/error.html"
         dbname = flask.request.form['date']
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
@@ -158,7 +158,7 @@ def make_list():
 @login_check
 def image_list():
     mode = flask.request.args.get('mode')
-    dbname = flask.request.args.get('dbname')
+    dbname = flask.session['userID']
     if mode == "homeTL":
         try:
             images,count = db.get_list("DB/user/" + dbname + ".db", "timeline")
@@ -175,9 +175,10 @@ def image_list():
         except:
             return flask.render_template('error.html')
     elif mode == "admin":
-        if admin_check() == False or setting['AdminShow'] == False:
+        if admin_check() == False and setting['AdminShow'] == False:
             return flask.render_template('error.html')
         try:
+            dbname = flask.request.args.get('dbname')
             images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
         except:
             return flask.render_template('error.html')
@@ -189,7 +190,7 @@ def image_list():
 def image_detail():
     mode = flask.request.args.get('mode')
     image_id = flask.request.args.get('id')
-    dbname = flask.request.args.get('dbname')
+    dbname = flask.session['userID']
     if mode == "homeTL":
         try:
             detail,html,idinfo = db.get_detail(int(image_id), "DB/user/"+dbname+".db", "timeline")
@@ -206,9 +207,10 @@ def image_detail():
         except:
             return flask.render_template('error.html')
     elif mode == "admin":
-        if admin_check() == False or setting['AdminShow'] == False:
+        if admin_check() == False and setting['AdminShow'] == False:
             return flask.render_template('error.html')
         try:
+            dbname = flask.request.args.get('dbname')
             detail,html,idinfo = db.get_detail(int(image_id), "DB/admin/"+dbname+".db", "list")
         except:
             return flask.render_template('error.html')
@@ -221,7 +223,7 @@ def image_detail():
 def download():
     #画像一覧取得
     mode = flask.request.form['mode']
-    dbname = flask.request.form['dbname']
+    dbname = flask.session['userID']
     if mode == "homeTL":
         try:
             images,count = db.get_list("DB/user/" + dbname + ".db", "timeline")
@@ -238,9 +240,10 @@ def download():
         except:
             return flask.render_template('error.html')
     elif mode == "admin":
-        if admin_check() == False or setting['AdminShow'] == False:
+        if admin_check() == False and setting['AdminShow'] == False:
             return flask.render_template('error.html')
         try:
+            dbname = flask.request.args.get('dbname')
             images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
         except:
             return flask.render_template('error.html')
