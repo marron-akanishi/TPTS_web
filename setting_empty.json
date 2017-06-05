@@ -9,6 +9,6 @@
         "Callback_URL": "http://localhost:5000/authed"
     },
     "MaxCount": 200,
-    "ShowAdminTL": false,
+    "AdminShow": false,
     "Debug": true
 }
