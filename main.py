@@ -157,6 +157,7 @@ def make_list():
         dbname = flask.request.form['date']
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
+# 画像リスト
 @app.route('/view', methods=['GET'])
 @login_check
 def image_list():
@@ -186,13 +187,13 @@ def image_detail():
             if admin_check() == False and setting['AdminShow'] == False:
                 return flask.render_template('error.html')
             dbname = flask.request.args.get('dbname')
-            detail,html,idinfo = db.get_detail(int(image_id), "DB/admin/"+dbname+".db", "list")
+            detail,html,idinfo,count = db.get_detail(int(image_id), "DB/admin/"+dbname+".db", "list")
         else:
-            detail,html,idinfo = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
+            detail,html,idinfo,count = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
     except:
         return flask.render_template('error.html')
     # index.html をレンダリングする
-    return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo)
+    return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo, mode=mode, dbname=dbname, max=count-1)
 
 # 一括ダウンロード
 @app.route('/download', methods=['POST'])

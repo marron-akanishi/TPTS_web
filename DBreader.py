@@ -48,6 +48,8 @@ def get_detail(filename, dbfile, table):
         raise ValueError
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
+    cur.execute("select count(filename) from {}".format(table))
+    count = cur.fetchone()[0]
     cur.execute( "select * from {} where filename = '{}'".format(table,str(filename).zfill(5)) )
     row = cur.fetchone()
     detail = {
@@ -69,7 +71,7 @@ def get_detail(filename, dbfile, table):
         html = get_html(detail["url"])
     except:
         html = "<p>ツイートが見つかりません</p>"
-    return detail,html,idinfo
+    return detail,html,idinfo,count
 
 # 埋め込み用HTMLの取得(detail用)
 def get_html(url):
