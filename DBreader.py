@@ -65,7 +65,10 @@ def get_detail(filename, dbfile, table):
     cur.close()
     conn.close()
     temp, idinfo = search_db(detail["userid"], dbfile, table)
-    html = get_html(detail["url"])
+    try:
+        html = get_html(detail["url"])
+    except:
+        html = "<p>ツイートが見つかりません</p>"
     return detail,html,idinfo
 
 # 埋め込み用HTMLの取得(detail用)
