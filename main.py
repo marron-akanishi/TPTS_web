@@ -106,6 +106,8 @@ def image_detail():
             detail,html,count,idinfo = db.get_detail(int(image_id), "collect/"+date+".db")
         except:
             return flask.render_template('error.html')
+        if html == "error":
+            html = "<p>ツイートが存在しません</p>"
         # index.html をレンダリングする
         return flask.render_template('detail.html', 
             data=detail, html=html, date=date, max=count, idcount=idinfo)

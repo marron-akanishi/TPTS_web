@@ -74,4 +74,7 @@ def get_detail(filename, dbfile):
 def get_html(url):
     r = requests.get("https://publish.twitter.com/oembed", {"url":url})
     data = json.loads(r.text)
-    return data["html"]
+    try:
+        return data["html"]
+    except:
+        return "error"
