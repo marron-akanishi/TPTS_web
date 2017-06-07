@@ -1,26 +1,6 @@
 {% extends "layout.html" %}
-{% block control %}
-<div class="container-fluid">
-  {% if dblist %}
-  <form action="/list" method="get" class="form-inline" style="display:inline;">
-    <label for="date">日付: </label>
-    <select id="date" name="date" class="form-control">
-      {% for dbfile in dblist %}
-        {% if dbfile == select %}
-          <option value="{{dbfile}}" selected>{{dbfile}}
-        {% else %}
-          <option value="{{dbfile}}">{{dbfile}}
-        {% endif %}
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-primary">OK</button>
-  </form>
-  {% else %}
-  <div class="alert alert-danger" role="alert">
-    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-    <span class="sr-only">エラー:</span>
-    データベース一覧作成時にエラーが発生しました
-  </div>
-  {% endif %}
+{% block menu %}
+<div align="center">
+  <img src="/static/images/twitter.png" onclick="location.href='/twitter_auth'" style="cursor: pointer" />
 </div>
-{% endblock %}
+{% endblock menu %}
