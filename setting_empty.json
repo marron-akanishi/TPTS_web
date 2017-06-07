@@ -10,5 +10,5 @@
     },
     "MaxCount": 200,
     "AdminShow": false,
-    "Debug": true
+    "Debug": false
 }

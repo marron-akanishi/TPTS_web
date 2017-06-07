@@ -107,39 +107,27 @@ def on_status(status, mode):
 
 def getuserTL(api, screen_name, count):
     """ユーザーTL"""
-    start = 1
     reset(api.me().id_str,"user")
-    for i in range(0,int(count/100)):
-        for status in api.user_timeline(screen_name=screen_name,since_id=start,count=100):
-            on_status(status, "user")
-            start = status.id
+    for status in tp.Cursor(api.user_timeline, screen_name=screen_name).items(count):
+        on_status(status, "user")
 
 def getlist(api, listurl, count):
     """リスト"""
-    start = 1
     reset(api.me().id_str, "list")
     listurl = listurl.replace("https://","")
     owner = listurl.split("/")[1]
     slug = listurl.split("/")[3]
-    for i in range(0,int(count/100)):
-        for status in api.list_timeline(owner_screen_name=owner,slug=slug,since_id=start,count=100):
-            on_status(status, "list")
-            start = status.id
+    for status in tp.Cursor(api.list_timeline, owner_screen_name=owner, slug=slug).items(count):
+        on_status(status, "list")
 
 def gethomeTL(api, count):
     """ホームTL"""
-    start = 1
     reset(api.me().id_str, "timeline")
-    for i in range(0,int(count/100)):
-        for status in api.home_timeline(since_id=start,count=100):
-            on_status(status, "timeline")
-            start = status.id
+    for status in tp.Cursor(api.home_timeline).items(count):
+        on_status(status, "timeline")
 
 def gethashtag(api, q_str, count):
     """ハッシュタグ"""
-    start = 1
     reset(api.me().id_str, "tag")
-    for i in range(0,int(count/100)):
-        for status in api.search(q="#" + q_str,rpp=100,since_id=start):
-            on_status(status, "tag")
-            start = status.id
+    for status in tp.Cursor(api.search, q="#" + q_str).items(count):
+        on_status(status, "tag")
