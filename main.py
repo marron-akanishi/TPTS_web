@@ -107,7 +107,9 @@ def user_page():
     filelist = []
     if admin_check() or setting['AdminShow']:
         filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-    return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"])
+        return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"])
+    else:
+        return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], count=setting["MaxCount"])
 
 # ログページ
 @app.route('/admin/logs')
