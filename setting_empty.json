@@ -8,7 +8,7 @@
         "Admin_Secret": "",
         "Callback_URL": "http://localhost:5000/authed"
     },
-    "MaxCount": 200,
+    "MaxCount": 100,
     "AdminShow": false,
     "Debug": false
 }

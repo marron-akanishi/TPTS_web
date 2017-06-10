@@ -26,6 +26,30 @@ jQuery(function($){
     });
 });
 
+function delfiles(){
+    dispLoading("削除中...");
+    $("#modal-dialog").modal('hide');
+    $.ajax({
+        url: '/delete',
+        type: 'POST',
+        beforeSend: function(xhr, settings) {
+            // ボタンを無効化し、二重送信を防止
+            $(".btn").attr('disabled', true);
+        },
+        success:function(resultdata) {
+            alert('削除が完了しました');
+        },
+        error: function(error) {
+            alert('削除に失敗しました');
+        },
+        complete : function(data) {
+            // Loadingイメージを消す
+            $(".btn").attr('disabled', false);
+            removeLoading();
+        }
+    });
+}
+
 // Loadingイメージ表示関数
 function dispLoading(msg){
     // 画面表示メッセージ

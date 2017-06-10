@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block menu %}
 <link href="/static/css/loading.css" rel="stylesheet" type="text/css" />
-<script src="/static/js/asynclist.js"></script>
+<script src="/static/js/menu.js"></script>
 <div class="container">
 	{% if admin %}
 		<div class="alert alert-success" role="alert">管理者として認証しました</div>
@@ -90,6 +90,32 @@
         <input type="button" class="btn btn-primary" onclick="location.href='/admin/logs'" value="表示">
       </td>
     </tr>
+    <tr>
+      <td>３日以上前のデータを消去する</td>
+      <td align="right">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-dialog">削除</button>
+      </td>
+    </tr>
+    <div class="modal" id="modal-dialog" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="modal-label">確認</h4>
+          </div>
+          <div class="modal-body">
+              ３日以上前に作成されたユーザーDBとzipを削除します(管理者TLのDBは削除しません)<br>
+              よろしいですか？
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+              <button type="button" class="btn btn-danger" onclick="delfiles()">削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}
   </table>
   <input type="button" class="btn btn-danger" onclick="location.href='/logout'" value="ログアウト">

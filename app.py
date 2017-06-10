@@ -128,6 +128,7 @@ def user_page():
     else:
         return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], count=setting["MaxCount"])
 
+# 管理者用
 # ログページ
 @app.route('/admin/logs')
 @login_check
@@ -151,6 +152,31 @@ def get_log():
     if text == "":
         text = "まだログは記録されていません"
     return text
+
+@app.route('/delete', methods=['POST'])
+@login_check
+def deltefile():
+    if admin_check():
+        now = datetime.datetime.now()
+        # DB
+        for path in glob.glob("DB/user/*.db"):
+            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+            if check.days >= 3:
+                try:
+                    os.remove(path)
+                except:
+                    continue
+        # zip
+        for path in glob.glob("static/zip/*.zip"):
+            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+            if check.days >= 3:
+                try:
+                    os.remove(path)
+                except:
+                    continue
+    else:
+        return flask.redirect(flask.url_for('user_page'))
+    return "OK"
 
 # 共通ページ
 # 画像リストビュー生成

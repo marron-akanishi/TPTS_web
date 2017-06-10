@@ -1,6 +1,12 @@
 # TPTS web  
 Twitterから二次元画像を効率よく回収しよう！  
 
+### 現在わかっているバグ
+
+- デバッグモードでFlask内蔵サーバーを使って走らせると収集スクリプトが二重に走る  
+- 画像の判定が遅い  
+- 判定の精度が低い
+
 ## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
 localhost:5050にポートフォワードしている。  
 /etc/localtimeにバインドして、JST対応  
