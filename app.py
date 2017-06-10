@@ -257,7 +257,7 @@ def download():
             images,count = db.get_list("DB/user/" + dbname + ".db", mode)
     except:
         return "/error.html"
-    zipdata = zipfile.ZipFile('static/zip/{}.zip'.format(flask.session['userID']),'w',zipfile.ZIP_DEFLATED)
+    zipdata = zipfile.ZipFile('static/zip/{}_{}.zip'.format(flask.session['userID'], mode),'w',zipfile.ZIP_DEFLATED)
     for i,image in enumerate(images):
         root, ext = os.path.splitext(image['image'])
         try:
@@ -267,7 +267,7 @@ def download():
         zipdata.writestr(str(i).zfill(5)+ext,temp_file)
         temp_file = None
     zipdata.close()
-    return 'static/zip/{}.zip'.format(flask.session['userID'])
+    return 'static/zip/{}_{}.zip'.format(flask.session['userID'], mode)
 
 if __name__ == '__main__':
     # debug server

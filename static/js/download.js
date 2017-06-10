@@ -12,7 +12,10 @@ jQuery(function($){
                 $("button").attr('disabled', true);
             },
             success:function(resultdata) {
-                location.href = resultdata
+                var a = document.createElement('a');
+                a.download = "";
+                a.href = resultdata;
+                a.click()
             },
             error: function(error) {
                 alert('ダウンロードに失敗しました');
