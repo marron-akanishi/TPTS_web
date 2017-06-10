@@ -1,25 +1,16 @@
 # TPTS web  
-Twitterから二次元画像を効率よく回収しよう！  
+Twitterから画像を収集し、二次元画像のみを自動で判別して一覧にします。    
 
-### 現在わかっているバグ
+## 現在わかっているバグ
 
 - デバッグモードでFlask内蔵サーバーを使って走らせると収集スクリプトが二重に走る  
-- 画像の判定が遅い  
+- 画像の判定が遅い
 - 判定の精度が低い
 
-## Dockerで使う場合(Host: ArchLinux, Guest: ArchLinux)
-localhost:5050にポートフォワードしている。  
-/etc/localtimeにバインドして、JST対応  
-setting.jsonを追加しておくこと(下記参照)  
-```bash
-# docker build -t tpts .
-# docker run -d -p 5050:5000 -ti -v /etc/localtime:/etc/localtime:ro tpts
-```
+## 運用方法
 
-## ローカルで使う場合
-
-setting_empty.jsonをsetting.jsonに変更(設定を記載)  
-設定を以下の通り 
+まず、setting_empty.jsonをsetting.jsonに変更し、設定を記載します。    
+設定の内容は以下のとおりになっています。   
 ```json
 {
     "SecretKey": "Sessionを保存する際に使用するキー(ランダム文字列)",
@@ -36,25 +27,34 @@ setting_empty.jsonをsetting.jsonに変更(設定を記載)
     "Debug": "デバッグモード"
 }
 ```
+以降の工程はDockerを使う場合とローカル上でそのまま動かす場合で異なります。  
+~~DockerはNginx+uWSGIによる本番運用モード、ローカルはFlask内蔵のサーバーを使用した開発モードとなっています。~~  
+現在はまだどちらもFlask内蔵のサーバーとなっています。
 
-### 必要なツールの導入
-#### Debian系の場合
+### Dockerで使う場合
+Dockerfileはホスト側、Dockerの仮想側ともにArch Linuxを使用することを想定して書かれています。(メンテナーの趣味)  
+また、localhost:5050にポートフォワードし、/etc/localtimeにバインドして、JST対応させています。  
+
+```bash
+# docker build -t tpts .
+# docker run -d -p 5050:5000 -ti -v /etc/localtime:/etc/localtime:ro tpts
+```
+
+### ローカルで使う場合
+
+#### 必要なツールの導入
+##### Debian系の場合
 ```bash
 $ sudo apt install python3 python3-pip python3-venv git cmake gcc libboost-python-dev
 ```
 
-#### RedHat系の場合
-```bash
-$ sudo dnf install python3 python3-pip git cmake gcc boost
-```
-
-#### ArchLinuxの場合
+##### ArchLinuxの場合
 
 ```bash
 # pacman -S python python-pip git cmake gcc boost
 ```
 
-### 上記の作業で必要なツールを入れた後に以下を実行(Debian系でテスト)
+#### 上記の作業で必要なツールを入れた後に以下を実行(Debian系でテスト)
 ```bash
 $ git clone https://github.com/marron-akanishi/TPTS_web
 $ cd TPTS_web
@@ -63,7 +63,12 @@ $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
 ```
 
-### スクリプトの実行
+#### スクリプトの実行
 ```bash
 (venv)$ python3 app.py
 ```
+
+## カスタマイズ
+このリポジトリはあくまでも例であり、MITライセンスの範囲であれば自由にカスタマイズできます。  
+レイアウトを変更する場合は、主にtemplates内のHTMLとstatic/css内のCSSを変更することになると思います。  
+また、static/html内のinfo.htmlはお知らせ部分の更新が可能です。

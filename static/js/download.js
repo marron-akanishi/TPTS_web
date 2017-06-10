@@ -1,6 +1,6 @@
 jQuery(function($){
     $("form").submit(function(event){
-        dispLoading("ダウンロード中...");
+        dispLoading("準備中...");
         event.preventDefault();
         var $form = $(this);
         $.ajax({
@@ -9,7 +9,7 @@ jQuery(function($){
             data: $form.serialize(),
             beforeSend: function(xhr, settings) {
                 // ボタンを無効化し、二重送信を防止
-                $("button").attr('disabled', true);
+                $(".btn").attr('disabled', true);
             },
             success:function(resultdata) {
                 var a = document.createElement('a');
@@ -21,7 +21,7 @@ jQuery(function($){
                 alert('ダウンロードに失敗しました');
             },
             complete : function(data) {
-                $("button").attr('disabled', false);
+                $(".btn").attr('disabled', false);
                 removeLoading();
             }
         });

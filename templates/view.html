@@ -4,11 +4,13 @@
 <script src="/static/js/download.js"></script>
 <div class="container-fluid">
   <input type="button" class="btn btn-primary" onclick="location.href='/menu'" value="メニューに戻る">
+  {% if count >= 1 %}
   <form class="form-inline" style="display:inline;">
       <input type="hidden" name="mode" value={{mode}}>
       <input type="hidden" name="dbname" value={{dbname}}>
       <button type="submit" class="btn btn-primary">一括ダウンロード</button>
   </form>
+  {% endif %}
 </div>
 {% endblock menu %}
 {% block list %}

@@ -37,16 +37,16 @@
     <tr><td>取得時刻</td><td>{{data.time}}</td></tr>
   </table>
   <ul class="nav nav-tabs" id="detailtab" role="tablist">
-    <li role="presentation" class="active"><a href="#embed" aria-controls="embed" role="tab" data-toggle="tab">Tweet</a></li>
-    <li role="presentation"><a href="#face" aria-controls="face" role="tab" data-toggle="tab">Image</a></li>
+    <li role="presentation" class="active"><a href="#face" aria-controls="face" role="tab" data-toggle="tab">Image</a></li>
+    <li role="presentation"><a href="#embed" aria-controls="embed" role="tab" data-toggle="tab">Tweet</a></li>
   </ul>
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="embed">
-      {{html|safe}}
-    </div>
-    <div role="tabpanel" class="tab-pane" id="face">
-      <h4><label class="checkbox-inline"><input type="checkbox" id="facemode" checked>検出位置表示</label></h4><br>
+    <div role="tabpanel" class="tab-pane active" id="face">
+      <h4><label class="checkbox-inline"><input type="checkbox" id="facemode" checked>検出位置表示</label></h4>
       <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="embed">
+      {{html|safe}}
     </div>
   </div>
 </div>
