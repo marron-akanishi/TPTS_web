@@ -8,7 +8,7 @@ import flask
 from functools import wraps
 import zipfile
 import urllib
-import threading
+import datetime
 # TL回収用
 import adminTL
 import gettweet
@@ -16,6 +16,13 @@ import gettweet
 # 自身の名称を app という名前でインスタンス化する
 app = flask.Flask(__name__)
 setting = json.load(open("setting.json"))
+app.secret_key = setting['SecretKey']
+app.debug = setting['Debug'] # デバッグモード
+
+# 回収
+t1 = adminTL.TLThread()
+t1.setDaemon(True)
+t1.start()
 
 # 認証後に使用可能
 def tp_api():
@@ -50,6 +57,16 @@ def index():
         flask.session['key'] = key
         flask.session['secret'] = secret
         return flask.redirect(flask.url_for('twitter_authed', cookie=True))
+
+# このページについて
+@app.route('/about')
+def about():
+    return flask.render_template('about.html', count=setting["MaxCount"])
+
+# 404エラー
+@app.errorhandler(404)
+def page_not_found(error):
+    return flask.render_template('error.html')
 
 # twitter認証
 @app.route('/twitter_auth', methods=['GET'])
@@ -106,7 +123,7 @@ def logout():
 def user_page():
     filelist = []
     if admin_check() or setting['AdminShow']:
-        filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
+        filelist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/admin/*.db")])
         return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"])
     else:
         return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], count=setting["MaxCount"])
@@ -116,9 +133,9 @@ def user_page():
 @login_check
 def log_page():
     if admin_check():
-        loglist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/log/*.log")])
+        loglist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/log/*.log")])
     else:
-        flask.redirect(flask.url_for('user_page'))
+        return flask.redirect(flask.url_for('user_page'))
     return flask.render_template('log.html', filelist=loglist)
 
 @app.route('/getlog', methods=['POST'])
@@ -130,7 +147,7 @@ def get_log():
         text = log.read()
         log.close()
     else:
-        flask.redirect(flask.url_for('user_page'))
+        return flask.redirect(flask.url_for('user_page'))
     if text == "":
         text = "まだログは記録されていません"
     return text
@@ -217,27 +234,15 @@ def download():
     zipdata = zipfile.ZipFile('static/zip/{}.zip'.format(flask.session['userID']),'w',zipfile.ZIP_DEFLATED)
     for i,image in enumerate(images):
         root, ext = os.path.splitext(image['image'])
-        temp_file = urllib.request.urlopen(image['image']+":orig").read()
+        try:
+            temp_file = urllib.request.urlopen(image['image']+":orig").read()
+        except:
+            continue
         zipdata.writestr(str(i).zfill(5)+ext,temp_file)
         temp_file = None
     zipdata.close()
-    return '/static/zip/{}.zip'.format(flask.session['userID'])
-
-# 認証不要ページ
-# このページについて
-@app.route('/about')
-def about():
-    return flask.render_template('about.html', count=setting["MaxCount"])
-
-# 404エラー
-@app.errorhandler(404)
-def page_not_found(error):
-    return flask.render_template('error.html')
+    return 'static/zip/{}.zip'.format(flask.session['userID'])
 
 if __name__ == '__main__':
-    t1 = adminTL.TLThread()
-    t1.setDaemon(True)
-    t1.start()
-    app.secret_key = setting['SecretKey']
-    app.debug = setting['Debug'] # デバッグモード
+    # debug server
     app.run(host='0.0.0.0') # どこからでもアクセス可能に

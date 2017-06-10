@@ -22,5 +22,5 @@ RUN pip install -r requirements.txt
 RUN pip install dlib
 
 CMD git pull
-CMD python main.py
+CMD python app.py
 

@@ -15,6 +15,9 @@ dbfile = None
 def reset(filename, mode):
     """保存用のフォルダーを生成し、必要な変数を初期化する"""
     global dbfile
+    global fileno
+    global file_hash
+    global file_md5
     dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/user/"+ filename + ".db")
     dbfile = sqlite3.connect(dbpath)
     try:
@@ -23,6 +26,9 @@ def reset(filename, mode):
     except:
         None
     dbfile.execute("create table {} (filename, image, username, url, tags, time, facex, facey, facew, faceh)".format(mode))
+    fileno = 0
+    file_hash = []
+    file_md5 = []
 
 def on_status(status, mode):
     """UserStreamから飛んできたStatusを処理する"""
@@ -58,7 +64,7 @@ def on_status(status, mode):
             filename = str(fileno).zfill(5)
             # ダウンロード
             try:
-                temp_file = urllib.request.urlopen(media_url).read()
+                temp_file = urllib.request.urlopen(media_url+":small").read()
             except:
                 continue
             # md5の取得

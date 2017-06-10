@@ -59,5 +59,5 @@ $ source venv/bin/activate
 
 ### スクリプトの実行
 ```bash
-(venv)$ python3 main.py
+(venv)$ python3 app.py
 ```

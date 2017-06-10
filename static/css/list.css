@@ -30,8 +30,8 @@
 
 .trim {
   overflow: hidden;
-  width: 200px;/* トリミングしたい枠の幅 */
-  height: 200px;/* トリミングしたい枠の高さ */
+  width: 150px;/* トリミングしたい枠の幅 */
+  height: 150px;/* トリミングしたい枠の高さ */
   position: relative;
 }
 

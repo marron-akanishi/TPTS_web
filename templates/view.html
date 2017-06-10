@@ -21,7 +21,7 @@
   <div style="display:inline;">
     <button onclick="location.href='/detail?mode={{mode}}&dbname={{dbname}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
       <div class="trim" id="{{detail.id}}">
-        <img data-original="{{detail.image}}" width="200" height="200" />
+        <img data-original="{{detail.image}}:thumb" width="150" height="150" />
         {% if detail.tags != "" %}
           <span class="badge">ハッシュタグ</span>
         {% endif %}

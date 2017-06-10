@@ -20,7 +20,11 @@ def face_2d(temp_file, userid, filename):
     facew = []
     faceh = []
     # 画像をメモリー上にデコード
-    image = cv2.imdecode(np.asarray(bytearray(temp_file), dtype=np.uint8), 1)
+    img = cv2.imdecode(np.asarray(bytearray(temp_file), dtype=np.uint8), 1)
+    # 画像サイズを半分に縮小(処理時間短縮)
+    orgWidth, orgHeight = img.shape[:2]
+    size = (int(orgHeight/2), int(orgWidth/2))
+    image = cv2.resize(img, size)
     # 画像から顔を検出
     try:
         faces = face_detector(image)
@@ -37,13 +41,14 @@ def face_2d(temp_file, userid, filename):
             # 出来た画像から目を検出
             eyes = eye_detector(face)
             if len(eyes) > 0:
-                facex.append(area.left())
-                facey.append(area.top())
-                facew.append(area.right()-area.left())
-                faceh.append(area.bottom()-area.top())
+                facex.append(area.left()*2)
+                facey.append(area.top()*2)
+                facew.append((area.right()-area.left())*2)
+                faceh.append((area.bottom()-area.top())*2)
                 get = True
     if get:
         return (dhash_calc(image), facex, facey, facew, faceh)
+        #return (1, facex, facey, facew, faceh)
     else:
         return (None, facex, facey, facew, faceh)
 
