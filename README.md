@@ -9,7 +9,8 @@ Twitterから画像を収集し、二次元画像のみを自動で判別して�
 
 ## 運用方法
 
-まず、setting_empty.jsonをsetting.jsonに変更し、設定を記載します。    
+まず、このリポジトリをクローンし、クローンできたフォルダーに移動します。
+次に、setting_empty.jsonをsetting.jsonに変更し、設定を記載します。    
 設定の内容は以下のとおりになっています。   
 ```json
 {
@@ -56,8 +57,6 @@ $ sudo apt install python3 python3-pip python3-venv git cmake gcc libboost-pytho
 
 #### 上記の作業で必要なツールを入れた後に以下を実行(Debian系でテスト)
 ```bash
-$ git clone https://github.com/marron-akanishi/TPTS_web
-$ cd TPTS_web
 $ python3 -m venv venv
 $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
@@ -71,4 +70,4 @@ $ source venv/bin/activate
 ## カスタマイズ
 このリポジトリはあくまでも例であり、MITライセンスの範囲であれば自由にカスタマイズできます。  
 レイアウトを変更する場合は、主にtemplates内のHTMLとstatic/css内のCSSを変更することになると思います。  
-また、static/html内のinfo.htmlはお知らせ部分の更新が可能です。
+また、static/html内のinfo.htmlでお知らせ部分の更新が可能です。
