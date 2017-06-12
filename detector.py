@@ -2,10 +2,7 @@ import os
 from os.path import abspath, basename
 import numpy as np
 import cv2
-try:
-    from dlib import simple_object_detector
-except ImportError:
-    exit()
+from dlib import simple_object_detector
 
 # 検出に必要なファイル
 face_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_face.svm"))
@@ -15,10 +12,7 @@ def face_2d(temp_file, userid, filename):
     # 最終検出結果
     get = False
     # 顔の位置
-    facex = []
-    facey = []
-    facew = []
-    faceh = []
+    facex = facey = facew = faceh = []
     # 画像をメモリー上にデコード
     img = cv2.imdecode(np.asarray(bytearray(temp_file), dtype=np.uint8), 1)
     # 画像サイズを半分に縮小(処理時間短縮)
@@ -48,7 +42,6 @@ def face_2d(temp_file, userid, filename):
                 get = True
     if get:
         return (dhash_calc(image), facex, facey, facew, faceh)
-        #return (1, facex, facey, facew, faceh)
     else:
         return (None, facex, facey, facew, faceh)
 
