@@ -137,3 +137,9 @@ def gethashtag(api, q_str, count):
     reset(api.me().id_str, "tag")
     for status in tp.Cursor(api.search, q="#" + q_str).items(count):
         on_status(status, "tag")
+
+def getfav(api, count):
+    """いいね"""
+    reset(api.me().id_str, "fav")
+    for status in tp.Cursor(api.favorites).items(count):
+        on_status(status, "fav")

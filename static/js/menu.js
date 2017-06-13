@@ -11,8 +11,12 @@ jQuery(function($){
                 // ボタンを無効化し、二重送信を防止
                 $(".btn").attr('disabled', true);
             },
-            success:function(resultdata) {
-                location.href=resultdata
+            success: function (resultdata) {
+                if(resultdata.indexOf('/view') != -1){
+                    location.href = resultdata;
+                }else{
+                    alert('取得に失敗しました');
+                }
             },
             error: function(error) {
                 alert('取得に失敗しました');

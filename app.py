@@ -187,24 +187,23 @@ def deltefile():
 def make_list():
     mode = flask.request.form['mode']
     dbname = flask.session['userID']
-    try:
-        if mode == "timeline":
-            gettweet.gethomeTL(tp_api(),setting["MaxCount"])
-        elif mode == "user":
-            userid = flask.request.form['userid']
-            gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
-        elif mode == "list":
-            url = flask.request.form['url']
-            gettweet.getlist(tp_api(),url,setting["MaxCount"])
-        elif mode == "tag":
-            hashtag = flask.request.form['hashtag']
-            gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
-        elif mode == "admin":
-            if admin_check() == False and setting['AdminShow'] == False:
-                    return "/error.html"
-            dbname = flask.request.form['date']
-    except:
-        return "/error.html"
+    if mode == "timeline":
+        gettweet.gethomeTL(tp_api(),setting["MaxCount"])
+    elif mode == "fav":
+        gettweet.getfav(tp_api(), setting["MaxCount"])
+    elif mode == "user":
+        userid = flask.request.form['userid']
+        gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
+    elif mode == "list":
+        url = flask.request.form['url']
+        gettweet.getlist(tp_api(),url,setting["MaxCount"])
+    elif mode == "tag":
+        hashtag = flask.request.form['hashtag']
+        gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
+    elif mode == "admin":
+        if admin_check() == False and setting['AdminShow'] == False:
+                return "/error.html"
+        dbname = flask.request.form['date']
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
 # 画像リスト
