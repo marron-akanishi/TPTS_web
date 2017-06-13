@@ -1,5 +1,6 @@
 # ajaxはPOST、それ以外はGET
 import os
+import sys
 import glob
 import json
 import DBreader as db
@@ -63,11 +64,6 @@ def index():
 def about():
     return flask.render_template('about.html', count=setting["MaxCount"])
 
-# 404エラー
-@app.errorhandler(404)
-def page_not_found(error):
-    return flask.render_template('error.html')
-
 # twitter認証
 @app.route('/twitter_auth', methods=['GET'])
 def twitter_oauth():
@@ -123,7 +119,10 @@ def logout():
 def user_page():
     filelist = []
     if admin_check() or setting['AdminShow']:
-        filelist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/admin/*.db")])
+        if sys.platform == "win32":
+            filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
+        else:
+            filelist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/admin/*.db")])
         return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"])
     else:
         return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], count=setting["MaxCount"])
@@ -134,7 +133,10 @@ def user_page():
 @login_check
 def log_page():
     if admin_check():
-        loglist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/log/*.log")])
+        if sys.platform == "win32":
+            loglist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/log/*.log")])
+        else:
+            loglist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/log/*.log")])
     else:
         return flask.redirect(flask.url_for('user_page'))
     return flask.render_template('log.html', filelist=loglist)
@@ -185,21 +187,24 @@ def deltefile():
 def make_list():
     mode = flask.request.form['mode']
     dbname = flask.session['userID']
-    if mode == "timeline":
-        gettweet.gethomeTL(tp_api(),setting["MaxCount"])
-    elif mode == "user":
-        userid = flask.request.form['userid']
-        gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
-    elif mode == "list":
-        url = flask.request.form['url']
-        gettweet.getlist(tp_api(),url,setting["MaxCount"])
-    elif mode == "tag":
-        hashtag = flask.request.form['hashtag']
-        gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
-    elif mode == "admin":
-        if admin_check() == False and setting['AdminShow'] == False:
-                return "/error.html"
-        dbname = flask.request.form['date']
+    try:
+        if mode == "timeline":
+            gettweet.gethomeTL(tp_api(),setting["MaxCount"])
+        elif mode == "user":
+            userid = flask.request.form['userid']
+            gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
+        elif mode == "list":
+            url = flask.request.form['url']
+            gettweet.getlist(tp_api(),url,setting["MaxCount"])
+        elif mode == "tag":
+            hashtag = flask.request.form['hashtag']
+            gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
+        elif mode == "admin":
+            if admin_check() == False and setting['AdminShow'] == False:
+                    return "/error.html"
+            dbname = flask.request.form['date']
+    except:
+        return "/error.html"
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
 # 画像リスト

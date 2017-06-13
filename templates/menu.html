@@ -3,11 +3,7 @@
 <link href="/static/css/loading.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/menu.js"></script>
 <div class="container">
-	{% if admin %}
-		<div class="alert alert-success" role="alert">管理者として認証しました</div>
-	{% else %}
-    <div class="alert alert-success" role="alert">ユーザーとして認証しました</div>
-	{% endif %}
+	<div class="alert alert-success" role="alert">@{{session['name']}}としてログインしました</div>
   <h4>お知らせ</h4>
   <iframe class="container" frameborder="0" id="news-iframe" src="/static/html/info.html"></iframe>
   <h4>メニュー</h4>
