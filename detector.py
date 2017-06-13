@@ -12,7 +12,10 @@ def face_2d(temp_file, userid, filename):
     # 最終検出結果
     get = False
     # 顔の位置
-    facex = facey = facew = faceh = []
+    facex = []
+    facey = []
+    facew = []
+    faceh = []
     # 画像をメモリー上にデコード
     img = cv2.imdecode(np.asarray(bytearray(temp_file), dtype=np.uint8), 1)
     # 画像サイズを半分に縮小(処理時間短縮)
