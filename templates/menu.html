@@ -96,9 +96,9 @@
       </td>
     </tr>
     <tr>
-      <td>３日以上前のデータを消去する</td>
+      <td>データベースファイルの整理を行う</td>
       <td align="right">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-dialog">削除</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modal-dialog">実行</button>
       </td>
     </tr>
     <div class="modal" id="modal-dialog" tabindex="-1">
@@ -111,7 +111,9 @@
               <h4 class="modal-title" id="modal-label">確認</h4>
           </div>
           <div class="modal-body">
-              ３日以上前に作成されたユーザーDBとzipを削除します(管理者TLのDBは削除しません)<br>
+              以下の条件に当てはまるファイルを削除します。<br>
+              ・3日以上に前に作成されたユーザー別DBファイルとダウンロード用一時zipファイル<br>
+              ・2週間以上前に作成された管理者TL収集DBファイルとログファイル<br>
               よろしいですか？
           </div>
           <div class="modal-footer">

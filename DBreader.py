@@ -75,9 +75,9 @@ def get_detail(filename, dbfile, table):
 
 # 埋め込み用HTMLの取得(detail用)
 def get_html(url):
-    r = requests.get("https://publish.twitter.com/oembed", {"url":url})
-    data = json.loads(r.text)
     try:
+        r = requests.get("https://publish.twitter.com/oembed", {"url":url})
+        data = json.loads(r.text)
         return data["html"]
     except:
         return "error"

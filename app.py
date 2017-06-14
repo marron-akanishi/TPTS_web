@@ -160,7 +160,7 @@ def get_log():
 def deltefile():
     if admin_check():
         now = datetime.datetime.now()
-        # DB
+        # userDB
         for path in glob.glob("DB/user/*.db"):
             check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
             if check.days >= 3:
@@ -172,6 +172,22 @@ def deltefile():
         for path in glob.glob("static/zip/*.zip"):
             check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
             if check.days >= 3:
+                try:
+                    os.remove(path)
+                except:
+                    continue
+        # adminDB
+        for path in glob.glob("DB/admin/*.db"):
+            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+            if check.days >= 14:
+                try:
+                    os.remove(path)
+                except:
+                    continue
+        # adminLog
+        for path in glob.glob("DB/log/*.log"):
+            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
+            if check.days >= 14:
                 try:
                     os.remove(path)
                 except:
