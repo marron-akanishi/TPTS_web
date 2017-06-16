@@ -42,7 +42,10 @@
   </ul>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="face">
-      <h4><label class="checkbox-inline"><input type="checkbox" id="facemode" checked>検出位置表示</label></h4>
+      <h4>
+        <label class="checkbox-inline"><input type="checkbox" id="facemode" checked>検出位置表示</label>
+        <button class="btn btn-default" onclick="window.open('https://images.google.com/searchbyimage?image_url={{data.image}}:large')">Googleでこの画像を検索</button>
+      </h4>
       <a href="{{data.image}}:orig"><canvas id="image_canvas" class="img-responsive img-thumbnail">画像を表示するには、canvasタグをサポートしたブラウザが必要です。</canvas></a>
     </div>
     <div role="tabpanel" class="tab-pane" id="embed">
