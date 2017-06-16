@@ -1,3 +1,10 @@
+window.onload = function(){
+    if (window.Notification && Notification.permission === 'default') {
+        // 許可が取れていない場合はNotificationの許可を取る
+        Notification.requestPermission()
+    }
+}
+
 jQuery(function($){
     $("form").submit(function(event){
         dispLoading("画像取得中...");
@@ -13,6 +20,9 @@ jQuery(function($){
             },
             success: function (resultdata) {
                 if(resultdata.indexOf('/view') != -1){
+                    if (window.Notification  && Notification.permission === 'granted') {
+                        var n = new Notification("取得が完了しました");
+                    }
                     location.href = resultdata;
                 }else{
                     alert('取得に失敗しました');
