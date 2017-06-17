@@ -22,8 +22,10 @@ jQuery(function($){
                 if(resultdata.indexOf('/view') != -1){
                     if (window.Notification  && Notification.permission === 'granted') {
                         var n = new Notification("取得が完了しました");
+                        n.onshow = function(){location.href = resultdata}
+                    }else{
+                        location.href = resultdata;
                     }
-                    location.href = resultdata;
                 }else{
                     alert('取得に失敗しました');
                 }
