@@ -193,7 +193,7 @@ def deltefile():
                 except:
                     continue
     else:
-        return flask.redirect(flask.url_for('user_page'))
+        flask.abort(401)
     return "OK"
 
 # 共通ページ
@@ -218,7 +218,7 @@ def make_list():
         gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
     elif mode == "admin":
         if admin_check() == False and setting['AdminShow'] == False:
-                return "/error.html"
+                flask.abort(401)
         dbname = flask.request.form['date']
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
@@ -270,13 +270,13 @@ def download():
     try:
         if mode == "admin":
             if admin_check() == False and setting['AdminShow'] == False:
-                return "/error.html"
+                flask.abort(401)
             dbname = flask.request.form['dbname']
             images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
         else:
             images,count = db.get_list("DB/user/" + dbname + ".db", mode)
     except:
-        return "/error.html"
+        flask.abort(401)
     zipdata = zipfile.ZipFile('static/zip/{}_{}.zip'.format(flask.session['userID'], mode),'w',zipfile.ZIP_DEFLATED)
     for i,image in enumerate(images):
         root, ext = os.path.splitext(image['image'])
