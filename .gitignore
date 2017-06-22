@@ -1,6 +1,8 @@
 *.db
 *.zip
 setting.json
+*.service
+*.out
 
 # Created by https://www.gitignore.io/api/django
 

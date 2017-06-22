@@ -80,4 +80,4 @@ def get_html(url):
         data = json.loads(r.text)
         return data["html"]
     except:
-        return "error"
+        raise

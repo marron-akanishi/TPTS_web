@@ -14,6 +14,8 @@ import datetime
 import adminTL
 import gettweet
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 # 自身の名称を app という名前でインスタンス化する
 app = flask.Flask(__name__)
 setting = json.load(open("setting.json"))
