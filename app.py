@@ -170,14 +170,6 @@ def deltefile():
                     os.remove(path)
                 except:
                     continue
-        # zip
-        for path in glob.glob("static/zip/*.zip"):
-            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
-            if check.days >= 3:
-                try:
-                    os.remove(path)
-                except:
-                    continue
         # adminDB
         for path in glob.glob("DB/admin/*.db"):
             check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
@@ -261,35 +253,6 @@ def image_detail():
         return flask.render_template('error.html')
     # index.html をレンダリングする
     return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo, mode=mode, dbname=dbname, max=count-1)
-
-# 一括ダウンロード
-@app.route('/download', methods=['POST'])
-@login_check
-def download():
-    #画像一覧取得
-    mode = flask.request.form['mode']
-    dbname = flask.session['userID']
-    try:
-        if mode == "admin":
-            if admin_check() == False and setting['AdminShow'] == False:
-                flask.abort(401)
-            dbname = flask.request.form['dbname']
-            images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
-        else:
-            images,count = db.get_list("DB/user/" + dbname + ".db", mode)
-    except:
-        flask.abort(401)
-    zipdata = zipfile.ZipFile('static/zip/{}_{}.zip'.format(flask.session['userID'], mode),'w',zipfile.ZIP_DEFLATED)
-    for i,image in enumerate(images):
-        root, ext = os.path.splitext(image['image'])
-        try:
-            temp_file = urllib.request.urlopen(image['image']+":orig").read()
-        except:
-            continue
-        zipdata.writestr(str(i).zfill(5)+ext,temp_file)
-        temp_file = None
-    zipdata.close()
-    return 'static/zip/{}_{}.zip'.format(flask.session['userID'], mode)
 
 if __name__ == '__main__':
     # debug server
