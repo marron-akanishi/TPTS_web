@@ -8,7 +8,6 @@ import tweepy as tp
 import detector
 
 fileno = 0
-file_hash = []
 file_md5 = []
 dbfile = None
 
@@ -16,7 +15,6 @@ def reset(filename, mode):
     """保存用のフォルダーを生成し、必要な変数を初期化する"""
     global dbfile
     global fileno
-    global file_hash
     global file_md5
     dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/user/"+ filename + ".db")
     dbfile = sqlite3.connect(dbpath)
@@ -27,13 +25,11 @@ def reset(filename, mode):
         None
     dbfile.execute("create table {} (filename, image, username, url, tags, time, facex, facey, facew, faceh)".format(mode))
     fileno = 0
-    file_hash = []
     file_md5 = []
 
 def on_status(status, mode):
     """UserStreamから飛んできたStatusを処理する"""
     global fileno
-    global file_hash
     global file_md5
     # Tweetに画像がついているか
     is_media = False
@@ -78,16 +74,9 @@ def on_status(status, mode):
             if current_hash is not None:
                 # すでに取得済みの画像は飛ばす
                 overlaped = False
-                for hash_key in file_hash:
-                    check = int(hash_key,16) ^ int(current_hash,16)
-                    count = bin(check).count('1')
-                    if count < 7:
-                        overlaped = True
-                        break
                 # 画像情報保存
                 if overlaped != True:
                     # 取得済みとしてハッシュ値を保存
-                    file_hash.append(current_hash)
                     file_md5.append(current_md5)
                     # ハッシュタグがあれば保存する
                     tags = []
