@@ -3,11 +3,12 @@
 <link href="/static/css/loading.css" rel="stylesheet" type="text/css" />
 <script src="/static/js/menu.js"></script>
 <div class="container">
-	<div class="alert alert-success" role="alert">@{{session['name']}}としてログインしました</div>
+  <div class="alert alert-success" role="alert">@{{session['name']}}としてログインしました</div>
   <h4>お知らせ</h4>
   <iframe class="container" frameborder="0" id="news-iframe" src="/static/html/info.html"></iframe>
   <h4>メニュー</h4>
   <table class="table">
+  {% if LimitMode == False %}
     <tr>
       <td>ホームTLの直近{{count}}件から画像を取得</td>
       <td align="right">
@@ -34,7 +35,7 @@
           <label for="userID">ユーザーID: </label>
           <div class="input-group">
             <div class="input-group-addon">@</div>
-            <input type="text" class="form-control" id="userID" name="userid" placeholder="hoge" required>
+            <input type="text" class="form-control" id="userID" name="query" placeholder="hoge" required>
           </div>
           <button type="submit" class="btn btn-primary">取得開始</button>
         </form>
@@ -47,7 +48,7 @@
           <input type="hidden" name="mode" value="list">
           <label for="listurl">リストURL: </label>
           <div class="input-group">
-            <input type="text" class="form-control" id="listurl" name="url" placeholder="https://twitter.com/hoge/lists/hoge" required>
+            <input type="text" class="form-control" id="listurl" name="query" placeholder="https://twitter.com/hoge/lists/hoge" required>
           </div>
           <button type="submit" class="btn btn-primary">取得開始</button>
         </form>
@@ -61,13 +62,14 @@
           <label for="hashtag">ハッシュタグ: </label>
           <div class="input-group">
             <div class="input-group-addon">#</div>
-            <input type="text" class="form-control" id="hashtag" name="hashtag" placeholder="hoge" required>
+            <input type="text" class="form-control" id="hashtag" name="query" placeholder="hoge" required>
           </div>
           <button type="submit" class="btn btn-primary">取得開始</button>
         </form>
       </td>
     </tr>
-  {% if admin or showadminTL %}
+  {% endif %}
+  {% if admin or showadminTL or LimitMode %}
     <tr>
       <td>管理者のTLから取得した画像を表示</td>
       <td align="right">

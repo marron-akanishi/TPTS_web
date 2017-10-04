@@ -120,12 +120,12 @@ def logout():
 @login_check
 def user_page():
     filelist = []
-    if admin_check() or setting['AdminShow']:
+    if admin_check() or setting['AdminShow'] or setting['LimitMode']:
         if sys.platform == "win32":
             filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
         else:
             filelist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-        return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"])
+        return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"], LimitMode=setting['LimitMode'])
     else:
         return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], count=setting["MaxCount"])
 
@@ -197,23 +197,16 @@ def deltefile():
 def make_list():
     mode = flask.request.form['mode']
     dbname = flask.session['userID']
-    if mode == "timeline":
-        gettweet.gethomeTL(tp_api(),setting["MaxCount"])
-    elif mode == "fav":
-        gettweet.getfav(tp_api(), setting["MaxCount"])
-    elif mode == "user":
-        userid = flask.request.form['userid']
-        gettweet.getuserTL(tp_api(),userid,setting["MaxCount"])
-    elif mode == "list":
-        url = flask.request.form['url']
-        gettweet.getlist(tp_api(),url,setting["MaxCount"])
-    elif mode == "tag":
-        hashtag = flask.request.form['hashtag']
-        gettweet.gethashtag(tp_api(),hashtag,setting["MaxCount"])
-    elif mode == "admin":
-        if admin_check() == False and setting['AdminShow'] == False:
+    try:
+        query = flask.request.form['query']
+    except:
+        query = ""
+    if mode == "admin":
+        if admin_check() == False and (setting['AdminShow'] == False or setting['LimitMode'] == False):
                 flask.abort(401)
         dbname = flask.request.form['date']
+    else:
+        gettweet.getTweets(tp_api(),mode,setting["MaxCount"],query)
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
 # 画像リスト

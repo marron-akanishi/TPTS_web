@@ -1,4 +1,5 @@
 import os
+import time
 import datetime
 import hashlib
 import urllib
@@ -14,8 +15,6 @@ dbfile = None
 def reset(filename, mode):
     """保存用のフォルダーを生成し、必要な変数を初期化する"""
     global dbfile
-    global fileno
-    global file_md5
     dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/user/"+ filename + ".db")
     dbfile = sqlite3.connect(dbpath)
     try:
@@ -24,13 +23,13 @@ def reset(filename, mode):
     except:
         None
     dbfile.execute("create table {} (filename, image, username, url, tags, time, facex, facey, facew, faceh)".format(mode))
-    fileno = 0
-    file_md5 = []
 
 def on_status(status, mode):
     """UserStreamから飛んできたStatusを処理する"""
     global fileno
     global file_md5
+    # ツイートについてる画像枚数
+    image_count = 0
     # Tweetに画像がついているか
     is_media = False
     # TweetがRTかどうか
@@ -99,36 +98,41 @@ def on_status(status, mode):
                     dbfile.commit()
                     fileno += 1
             temp_file = None
+            image_count += 1
+    return image_count
 
-def getuserTL(api, screen_name, count):
-    """ユーザーTL"""
-    reset(api.me().id_str,"user")
-    for status in tp.Cursor(api.user_timeline, screen_name=screen_name).items(count):
-        on_status(status, "user")
-
-def getlist(api, listurl, count):
-    """リスト"""
-    reset(api.me().id_str, "list")
-    listurl = listurl.replace("https://","")
-    owner = listurl.split("/")[1]
-    slug = listurl.split("/")[3]
-    for status in tp.Cursor(api.list_timeline, owner_screen_name=owner, slug=slug).items(count):
-        on_status(status, "list")
-
-def gethomeTL(api, count):
-    """ホームTL"""
-    reset(api.me().id_str, "timeline")
-    for status in tp.Cursor(api.home_timeline).items(count):
-        on_status(status, "timeline")
-
-def gethashtag(api, q_str, count):
-    """ハッシュタグ"""
-    reset(api.me().id_str, "tag")
-    for status in tp.Cursor(api.search, q="#" + q_str).items(count):
-        on_status(status, "tag")
-
-def getfav(api, count):
-    """いいね"""
-    reset(api.me().id_str, "fav")
-    for status in tp.Cursor(api.favorites).items(count):
-        on_status(status, "fav")
+def getTweets(api, mode, count, query):
+    start = time.time()
+    
+    # DBのリセット等
+    reset(api.me().id_str, mode)
+    tweet_count = image_count = 0
+    # 取得モード
+    if mode == "timeline":
+        for status in tp.Cursor(api.home_timeline).items(count):
+            image_count += on_status(status, mode)
+            tweet_count += 1
+    elif mode == "fav":
+        for status in tp.Cursor(api.favorites).items(count):
+            image_count += on_status(status, mode)
+            tweet_count += 1
+    elif mode == "user":
+        for status in tp.Cursor(api.user_timeline, screen_name=query).items(count):
+            image_count += on_status(status, mode)
+            tweet_count += 1
+    elif mode == "list":
+        listurl = query.replace("https://","")
+        owner = listurl.split("/")[1]
+        slug = listurl.split("/")[3]
+        for status in tp.Cursor(api.list_timeline, owner_screen_name=owner, slug=slug).items(count):
+            image_count += on_status(status, mode)
+            tweet_count += 1
+    elif mode == "tag":
+        for status in tp.Cursor(api.search, q="#" + query).items(count):
+            image_count += on_status(status, mode)
+            tweet_count += 1
+    
+    elapsed_time = time.time() - start
+    # 返却値->(実行時間,全ツイート数,全画像枚数)
+    return elapsed_time,tweet_count,image_count
+        
