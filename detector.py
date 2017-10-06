@@ -1,6 +1,7 @@
 import os
 from os.path import abspath, basename
 import numpy as np
+import scipy.fftpack
 import cv2
 from dlib import simple_object_detector
 
@@ -44,10 +45,21 @@ def face_2d(temp_file, userid, filename):
                 faceh.append((area.bottom()-area.top())*2)
                 get = True
     if get:
-        return (dhash_calc(image), facex, facey, facew, faceh)
+        return (phash_calc(image), facex, facey, facew, faceh)
     else:
         return (None, facex, facey, facew, faceh)
 
+def phash_calc(image, hash_size=32):
+    check_image = cv2.resize(image, (hash_size, hash_size))
+    check_image = cv2.cvtColor(check_image, cv2.COLOR_RGB2GRAY)
+    dct = scipy.fftpack.dct(check_image)
+    dctlowfreq = dct[:8, 1:9]
+    avg = dctlowfreq.mean()
+    diff = dctlowfreq > avg
+    value_str = ""
+    for value in [flatten for inner in diff for flatten in inner]:
+        value_str += '1' if value else '0'
+    return value_str
 
 def dhash_calc(image, hash_size = 7):
     check_image = cv2.resize(image,(hash_size,hash_size+1))

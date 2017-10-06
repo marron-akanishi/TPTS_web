@@ -83,9 +83,9 @@ class StreamListener(tp.StreamListener):
                         # すでに取得済みの画像は飛ばす
                         overlaped = False
                         for hash_key in self.file_hash:
-                            check = int(hash_key,16) ^ int(current_hash,16)
+                            check = int(hash_key,2) ^ int(current_hash,2)
                             count = bin(check).count('1')
-                            if count < 7:
+                            if count < 4:
                                 self.logfile.write("geted  : " + status.user.screen_name +"-" + filename+"<br>\n")
                                 overlaped = True
                                 break

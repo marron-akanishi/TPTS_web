@@ -73,26 +73,22 @@ def on_status(status, dbfile, mode):
             current_hash = None
             current_hash, facex, facey, facew, faceh = detector.face_2d(temp_file, status.user.screen_name, filename)
             if current_hash is not None:
-                # すでに取得済みの画像は飛ばす
-                overlaped = False
-                # 画像情報保存
-                if overlaped != True:
-                    # 取得済みとしてハッシュ値を保存
-                    file_md5.append(current_md5)
-                    # ハッシュタグがあれば保存する
-                    tags = []
-                    if hasattr(status, "entities"):
-                        if "hashtags" in status.entities:
-                            for hashtag in status.entities['hashtags']:
-                                tags.append(hashtag['text'])
-                    # データベースに保存
-                    SQL = "insert into {} values (?,?,?,?,?,?,?,?,?,?)".format(mode)
-                    url = "https://twitter.com/" + status.user.screen_name + "/status/" + status.id_str
-                    value = (filename, media_url, status.user.screen_name, url, str(tags).replace("'",""), 
-                            str(datetime.datetime.now()), str(facex), str(facey), str(facew), str(faceh))
-                    dbfile.execute(SQL, value)
-                    dbfile.commit()
-                    fileno += 1
+                # 取得済みとしてハッシュ値を保存
+                file_md5.append(current_md5)
+                # ハッシュタグがあれば保存する
+                tags = []
+                if hasattr(status, "entities"):
+                    if "hashtags" in status.entities:
+                        for hashtag in status.entities['hashtags']:
+                            tags.append(hashtag['text'])
+                # データベースに保存
+                SQL = "insert into {} values (?,?,?,?,?,?,?,?,?,?)".format(mode)
+                url = "https://twitter.com/" + status.user.screen_name + "/status/" + status.id_str
+                value = (filename, media_url, status.user.screen_name, url, str(tags).replace("'",""), 
+                        str(datetime.datetime.now()), str(facex), str(facey), str(facew), str(faceh))
+                dbfile.execute(SQL, value)
+                dbfile.commit()
+                fileno += 1
             temp_file = None
             image_count += 1
     return image_count
