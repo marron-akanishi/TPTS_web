@@ -8,9 +8,9 @@
   <iframe class="container" frameborder="0" id="news-iframe" src="/static/html/info.html"></iframe>
   <h4>メニュー</h4>
   <table class="table">
-  {% if LimitMode == False %}
+  {% if setting.LimitMode == false %}
     <tr>
-      <td>ホームTLの直近{{count}}件から画像を取得</td>
+      <td>ホームTLの直近{{setting.MaxCount}}件から画像を取得</td>
       <td align="right">
         <form class="form-inline" style="display:inline;">
           <input type="hidden" name="mode" value="timeline">
@@ -19,7 +19,7 @@
       </td>
     </tr>
     <tr>
-      <td>自分のいいねの直近{{count}}件から画像を取得</td>
+      <td>自分のいいねの直近{{setting.MaxCount}}件から画像を取得</td>
       <td align="right">
         <form class="form-inline" style="display:inline;">
           <input type="hidden" name="mode" value="fav">
@@ -28,7 +28,7 @@
       </td>
     </tr>
     <tr>
-      <td>指定したユーザーの直近{{count}}件から画像を取得</td>
+      <td>指定したユーザーの直近{{setting.MaxCount}}件から画像を取得</td>
       <td align="right">
         <form class="form-inline" style="display:inline;">
           <input type="hidden" name="mode" value="user">
@@ -42,7 +42,7 @@
       </td>
     </tr>
     <tr>
-      <td>指定したリストの直近{{count}}件から画像を取得</td>
+      <td>指定したリストの直近{{setting.MaxCount}}件から画像を取得</td>
       <td align="right">
         <form class="form-inline" style="display:inline;">
           <input type="hidden" name="mode" value="list">
@@ -55,7 +55,7 @@
       </td>
     </tr>
     <tr>
-      <td>指定したハッシュタグの直近{{count}}件から画像を取得</td>
+      <td>指定したハッシュタグの直近{{setting.MaxCount}}件から画像を取得</td>
       <td align="right">
         <form class="form-inline" style="display:inline;">
           <input type="hidden" name="mode" value="tag">
@@ -69,7 +69,7 @@
       </td>
     </tr>
   {% endif %}
-  {% if admin or showadminTL or LimitMode %}
+  {% if admin or setting.AdminShow or setting.LimitMode %}
     <tr>
       <td>管理者のTLから取得した画像を表示</td>
       <td align="right">

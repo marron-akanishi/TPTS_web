@@ -101,17 +101,11 @@ class StreamListener(tp.StreamListener):
                                     for hashtag in status.entities['hashtags']:
                                         tags.append(hashtag['text'])
                             # データベースに保存
+                            SQL = "insert into list values (?,?,?,?,0,0,?,?,?,?,?,?)"
                             url = "https://twitter.com/" + status.user.screen_name + "/status/" + status.id_str
-                            self.dbfile.execute("insert into list(filename) values('" + filename + "')")
-                            self.dbfile.execute("update list set image = '" + media_url + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set username = '" + status.user.screen_name + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set url = '" + url + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set facex = '" + str(facex) + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set facey = '" + str(facey) + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set facew = '" + str(facew) + "' where filename = '" + filename + "'")
-                            self.dbfile.execute("update list set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
+                            value = (filename, media_url, status.user.screen_name, url, str(tags).replace("'",""),
+                                    str(datetime.datetime.now()), str(facex), str(facey), str(facew), str(faceh))
+                            self.dbfile.execute(SQL, value)
                             self.dbfile.commit()
                             self.logfile.write("saved  : " + status.user.screen_name + "-" + filename+"<br>\n")
                             self.fileno += 1

@@ -6,6 +6,7 @@ import json
 # DBからファイルリスト取得
 def get_list(path, table):
     images = []
+    result = { 'time' : 0, 'image_count' : 0, 'tweet_count' : 0}
     if os.path.exists(path):
         conn = sqlite3.connect(path)
     else:
@@ -17,9 +18,17 @@ def get_list(path, table):
     cur.execute( "select * from {} order by filename".format(table) )
     for row in cur:
         images.append({"id":int(row["filename"]), "tags":row["tags"][1:-1], "image":row["image"]})
+    if table != "list":
+        cur.execute("select * from result")
+        for row in cur:
+            if(row["mode"] == table):
+                result["time"] = int(float(row["time"]))
+                result["image_count"] = int(row["image_count"])
+                result["tweet_count"] = int(row["tweet_count"])
+                break
     cur.close()
     conn.close()
-    return images,count
+    return images,count,result
 
 # DBからIDで検索
 def search_db(userid, dbfile, table):

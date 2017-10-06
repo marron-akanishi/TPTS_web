@@ -16,7 +16,12 @@
 <script src="/static/js/totop.js"></script>
 <script src="/static/js/jquery.lazyload.min.js"></script>
 <div class="container-fluid">
-  <p>件数 : {{count}}</p>
+  <p>取得件数 : {{count}}</p>
+  {% if result.time != 0 %}
+  <p>処理時間 : {{result.time}}s</p>
+  <p>処理枚数 : {{result.image_count}}</p>
+  <p>処理ツイート数 : {{result.tweet_count}}</p>
+  {% endif %}
   {% for detail in filelist %}
   <div style="display:inline;">
     <button onclick="location.href='/detail?mode={{mode}}&dbname={{dbname}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">

@@ -10,21 +10,23 @@ import detector
 
 fileno = 0
 file_md5 = []
-dbfile = None
 
-def reset(filename, mode):
+def reset(dbfile, mode):
     """保存用のフォルダーを生成し、必要な変数を初期化する"""
-    global dbfile
-    dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/user/"+ filename + ".db")
-    dbfile = sqlite3.connect(dbpath)
     try:
-        dbfile.execute("drop table {}".format(mode))
-        dbfile.execute("vacuum")
+        dbfile.execute("drop table result")
     except:
         None
+    try:
+        dbfile.execute("drop table {}".format(mode))
+    except:
+        None
+    dbfile.execute("vacuum")
     dbfile.execute("create table {} (filename, image, username, url, tags, time, facex, facey, facew, faceh)".format(mode))
+    dbfile.execute("create table result (mode, time, image_count, tweet_count)")
+    dbfile.commit()
 
-def on_status(status, mode):
+def on_status(status, dbfile, mode):
     """UserStreamから飛んできたStatusを処理する"""
     global fileno
     global file_md5
@@ -84,17 +86,11 @@ def on_status(status, mode):
                             for hashtag in status.entities['hashtags']:
                                 tags.append(hashtag['text'])
                     # データベースに保存
+                    SQL = "insert into {} values (?,?,?,?,?,?,?,?,?,?)".format(mode)
                     url = "https://twitter.com/" + status.user.screen_name + "/status/" + status.id_str
-                    dbfile.execute("insert into "+mode+"(filename) values('" + filename + "')")
-                    dbfile.execute("update "+mode+" set image = '" + media_url + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set username = '" + status.user.screen_name + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set url = '" + url + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set tags = '" + str(tags).replace("'","") + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set time = '" + str(datetime.datetime.now()) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set facex = '" + str(facex) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set facey = '" + str(facey) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set facew = '" + str(facew) + "' where filename = '" + filename + "'")
-                    dbfile.execute("update "+mode+" set faceh = '" + str(faceh) + "' where filename = '" + filename + "'")
+                    value = (filename, media_url, status.user.screen_name, url, str(tags).replace("'",""), 
+                            str(datetime.datetime.now()), str(facex), str(facey), str(facew), str(faceh))
+                    dbfile.execute(SQL, value)
                     dbfile.commit()
                     fileno += 1
             temp_file = None
@@ -103,36 +99,42 @@ def on_status(status, mode):
 
 def getTweets(api, mode, count, query):
     start = time.time()
+
+    dbpath = os.path.abspath(__file__).replace(os.path.basename(__file__),"/DB/user/"+ api.me().id_str + ".db")
+    dbfile = sqlite3.connect(dbpath)
     
     # DBのリセット等
-    reset(api.me().id_str, mode)
+    reset(dbfile, mode)
     tweet_count = image_count = 0
     # 取得モード
     if mode == "timeline":
         for status in tp.Cursor(api.home_timeline).items(count):
-            image_count += on_status(status, mode)
+            image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "fav":
         for status in tp.Cursor(api.favorites).items(count):
-            image_count += on_status(status, mode)
+            image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "user":
         for status in tp.Cursor(api.user_timeline, screen_name=query).items(count):
-            image_count += on_status(status, mode)
+            image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "list":
         listurl = query.replace("https://","")
         owner = listurl.split("/")[1]
         slug = listurl.split("/")[3]
         for status in tp.Cursor(api.list_timeline, owner_screen_name=owner, slug=slug).items(count):
-            image_count += on_status(status, mode)
+            image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "tag":
         for status in tp.Cursor(api.search, q="#" + query).items(count):
-            image_count += on_status(status, mode)
+            image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     
     elapsed_time = time.time() - start
-    # 返却値->(実行時間,全ツイート数,全画像枚数)
-    return elapsed_time,tweet_count,image_count
+    # 実行時間,全ツイート数,全画像枚数をデータベースに
+    SQL = "insert into result values (?,?,?,?)"
+    value = (mode, str(elapsed_time), str(image_count), str(tweet_count))
+    dbfile.execute(SQL, value)
+    dbfile.commit()
         

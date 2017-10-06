@@ -23,9 +23,10 @@ app.secret_key = setting['SecretKey']
 app.debug = setting['Debug'] # デバッグモード
 
 # 回収
-t1 = adminTL.TLThread()
-t1.setDaemon(True)
-t1.start()
+if(setting['Debug'] == False):
+    t1 = adminTL.TLThread()
+    t1.setDaemon(True)
+    t1.start()
 
 # 認証後に使用可能
 def tp_api():
@@ -125,9 +126,9 @@ def user_page():
             filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
         else:
             filelist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-        return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], dblist=filelist, select=filelist[-1], count=setting["MaxCount"], LimitMode=setting['LimitMode'])
+        return flask.render_template('menu.html', admin=admin_check(), setting=setting, dblist=filelist, select=filelist[-1])
     else:
-        return flask.render_template('menu.html', admin=admin_check(), showadminTL=setting['AdminShow'], count=setting["MaxCount"])
+        return flask.render_template('menu.html', admin=admin_check(), setting=setting)
 
 # 管理者用
 # ログページ
@@ -220,12 +221,12 @@ def image_list():
             if admin_check() == False and setting['AdminShow'] == False:
                 return flask.render_template('error.html')
             dbname = flask.request.args.get('dbname')
-            images,count = db.get_list("DB/admin/" + dbname + ".db", "list")
+            images,count,result = db.get_list("DB/admin/" + dbname + ".db", "list")
         else:
-            images,count = db.get_list("DB/user/" + dbname + ".db", mode)
+            images,count,result = db.get_list("DB/user/" + dbname + ".db", mode)
     except:
-        return flask.render_template('error.html')
-    return flask.render_template('view.html', filelist=images, count=count, mode=mode, dbname=dbname)
+         return flask.render_template('error.html')
+    return flask.render_template('view.html', filelist=images, count=count, mode=mode, dbname=dbname, result = result)
 
 # 画像詳細
 @app.route('/detail', methods=['GET'])
@@ -244,7 +245,6 @@ def image_detail():
             detail,html,idinfo,count = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
     except:
         return flask.render_template('error.html')
-    # index.html をレンダリングする
     return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo, mode=mode, dbname=dbname, max=count-1)
 
 if __name__ == '__main__':
