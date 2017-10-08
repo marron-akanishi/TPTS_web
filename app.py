@@ -203,7 +203,7 @@ def make_list():
     except:
         query = ""
     if mode == "admin":
-        if admin_check() == False and (setting['AdminShow'] == False or setting['LimitMode'] == False):
+        if admin_check() == False and setting['AdminShow'] == False and setting['LimitMode'] == False:
                 flask.abort(401)
         dbname = flask.request.form['date']
     else:
@@ -218,7 +218,7 @@ def image_list():
     dbname = flask.session['userID']
     try:
         if mode == "admin":
-            if admin_check() == False and setting['AdminShow'] == False:
+            if admin_check() == False and setting['AdminShow'] == False and setting['LimitMode'] == False:
                 return flask.render_template('error.html')
             dbname = flask.request.args.get('dbname')
             images,count,result = db.get_list("DB/admin/" + dbname + ".db", "list")
@@ -237,7 +237,7 @@ def image_detail():
     dbname = flask.session['userID']
     try:
         if mode == "admin":
-            if admin_check() == False and setting['AdminShow'] == False:
+            if admin_check() == False and setting['AdminShow'] == False and setting['LimitMode'] == False:
                 return flask.render_template('error.html')
             dbname = flask.request.args.get('dbname')
             detail,html,idinfo,count = db.get_detail(int(image_id), "DB/admin/"+dbname+".db", "list")
@@ -249,4 +249,4 @@ def image_detail():
 
 if __name__ == '__main__':
     # debug server
-    app.run(host='0.0.0.0') # どこからでもアクセス可能に
+    app.run(host='0.0.0.0',port=80) # どこからでもアクセス可能に
