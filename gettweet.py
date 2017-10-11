@@ -102,17 +102,30 @@ def getTweets(api, mode, count, query):
     # DBのリセット等
     reset(dbfile, mode)
     tweet_count = image_count = 0
+    tweet_id = []
     # 取得モード
     if mode == "timeline":
         for status in tp.Cursor(api.home_timeline).items(count):
+            if status.id in tweet_id:
+                continue
+            else:
+                tweet_id.append(status.id)
             image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "fav":
         for status in tp.Cursor(api.favorites).items(count):
+            if status.id in tweet_id:
+                continue
+            else:
+                tweet_id.append(status.id)
             image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "user":
         for status in tp.Cursor(api.user_timeline, screen_name=query).items(count):
+            if status.id in tweet_id:
+                continue
+            else:
+                tweet_id.append(status.id)
             image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "list":
@@ -120,10 +133,18 @@ def getTweets(api, mode, count, query):
         owner = listurl.split("/")[1]
         slug = listurl.split("/")[3]
         for status in tp.Cursor(api.list_timeline, owner_screen_name=owner, slug=slug).items(count):
+            if status.id in tweet_id:
+                continue
+            else:
+                tweet_id.append(status.id)
             image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     elif mode == "tag":
         for status in tp.Cursor(api.search, q="#" + query).items(count):
+            if status.id in tweet_id:
+                continue
+            else:
+                tweet_id.append(status.id)
             image_count += on_status(status, dbfile, mode)
             tweet_count += 1
     
