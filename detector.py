@@ -6,8 +6,8 @@ import cv2
 from dlib import simple_object_detector
 
 # 検出に必要なファイル
-face_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_face.svm"))
-eye_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_eye.svm"))
+face_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_face_new.svm"))
+#eye_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_eye.svm"))
 
 def face_2d(temp_file, userid, filename):
     # 最終検出結果
@@ -36,14 +36,11 @@ def face_2d(temp_file, userid, filename):
             if area.bottom()-area.top() < image.shape[0]*0.05 or area.right()-area.left() < image.shape[1]*0.05:
                 continue
             face = image[area.top():area.bottom(), area.left():area.right()]
-            # 出来た画像から目を検出
-            eyes = eye_detector(face)
-            if len(eyes) > 0:
-                facex.append(area.left()*2)
-                facey.append(area.top()*2)
-                facew.append((area.right()-area.left())*2)
-                faceh.append((area.bottom()-area.top())*2)
-                get = True
+            facex.append(area.left()*2)
+            facey.append(area.top()*2)
+            facew.append((area.right()-area.left())*2)
+            faceh.append((area.bottom()-area.top())*2)
+            get = True
     if get:
         return (phash_calc(image), facex, facey, facew, faceh)
     else:
