@@ -16,11 +16,11 @@ def reset(dbfile, mode):
     try:
         dbfile.execute("drop table result")
     except:
-        None
+        pass
     try:
         dbfile.execute("drop table {}".format(mode))
     except:
-        None
+        pass
     dbfile.execute("vacuum")
     dbfile.execute("create table {} (filename, image, username, url, tags, time, facex, facey, facew, faceh)".format(mode))
     dbfile.execute("create table result (mode, time, image_count, tweet_count)")
