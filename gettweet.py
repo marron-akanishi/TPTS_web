@@ -8,9 +8,6 @@ import json
 import tweepy as tp
 import detector
 
-fileno = 0
-file_md5 = []
-
 def reset(dbfile, mode):
     """保存用のフォルダーを生成し、必要な変数を初期化する"""
     try:
@@ -26,10 +23,9 @@ def reset(dbfile, mode):
     dbfile.execute("create table result (mode, time, image_count, tweet_count)")
     dbfile.commit()
 
-def on_status(status, dbfile, mode):
+def on_status(status, dbfile, mode, id, file_md5):
     """UserStreamから飛んできたStatusを処理する"""
-    global fileno
-    global file_md5
+    return_md5 = []
     # ツイートについてる画像枚数
     image_count = 0
     # Tweetに画像がついているか
@@ -58,7 +54,7 @@ def on_status(status, dbfile, mode):
                 break
             # URL, ファイル名
             media_url = image['media_url']
-            filename = str(fileno).zfill(5)
+            filename = str(id).zfill(5)
             # ダウンロード
             try:
                 temp_file = urllib.request.urlopen(media_url+":small").read()
@@ -74,7 +70,7 @@ def on_status(status, dbfile, mode):
             current_hash, facex, facey, facew, faceh = detector.face_2d(temp_file, status.user.screen_name, filename)
             if current_hash is not None:
                 # 取得済みとしてハッシュ値を保存
-                file_md5.append(current_md5)
+                return_md5.append(current_md5)
                 # ハッシュタグがあれば保存する
                 tags = []
                 if hasattr(status, "entities"):
@@ -88,10 +84,10 @@ def on_status(status, dbfile, mode):
                         str(datetime.datetime.now()), str(facex), str(facey), str(facew), str(faceh))
                 dbfile.execute(SQL, value)
                 dbfile.commit()
-                fileno += 1
+                id += 1
             temp_file = None
             image_count += 1
-    return image_count
+    return id, image_count, return_md5
 
 def getTweets(api, mode, count, query):
     start = time.time()
@@ -101,8 +97,13 @@ def getTweets(api, mode, count, query):
     
     # DBのリセット等
     reset(dbfile, mode)
-    tweet_count = image_count = 0
+    tweet_count = 0
+    image_count = 0
+    temp_count = 0
+    id = 0
     tweet_id = []
+    file_md5 = []
+    return_md5 = []
     # 取得モード
     if mode == "timeline":
         for status in tp.Cursor(api.home_timeline).items(count):
@@ -110,7 +111,9 @@ def getTweets(api, mode, count, query):
                 continue
             else:
                 tweet_id.append(status.id)
-            image_count += on_status(status, dbfile, mode)
+            id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
+            file_md5 += return_md5
+            image_count += temp_count
             tweet_count += 1
     elif mode == "fav":
         for status in tp.Cursor(api.favorites).items(count):
@@ -118,15 +121,18 @@ def getTweets(api, mode, count, query):
                 continue
             else:
                 tweet_id.append(status.id)
-            image_count += on_status(status, dbfile, mode)
-            tweet_count += 1
+            id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
+            file_md5 += return_md5
+            image_count += temp_count
     elif mode == "user":
         for status in tp.Cursor(api.user_timeline, screen_name=query).items(count):
             if status.id in tweet_id:
                 continue
             else:
                 tweet_id.append(status.id)
-            image_count += on_status(status, dbfile, mode)
+            id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
+            file_md5 += return_md5
+            image_count += temp_count
             tweet_count += 1
     elif mode == "list":
         listurl = query.replace("https://","")
@@ -137,7 +143,9 @@ def getTweets(api, mode, count, query):
                 continue
             else:
                 tweet_id.append(status.id)
-            image_count += on_status(status, dbfile, mode)
+            id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
+            file_md5 += return_md5
+            image_count += temp_count
             tweet_count += 1
     elif mode == "tag":
         for status in tp.Cursor(api.search, q="#" + query).items(count):
@@ -145,7 +153,9 @@ def getTweets(api, mode, count, query):
                 continue
             else:
                 tweet_id.append(status.id)
-            image_count += on_status(status, dbfile, mode)
+            id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
+            file_md5 += return_md5
+            image_count += temp_count
             tweet_count += 1
     elif mode == "keyword":
         for status in tp.Cursor(api.search, q=query).items(count):
@@ -153,7 +163,9 @@ def getTweets(api, mode, count, query):
                 continue
             else:
                 tweet_id.append(status.id)
-            image_count += on_status(status, dbfile, mode)
+            id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
+            file_md5 += return_md5
+            image_count += temp_count
             tweet_count += 1
     
     elapsed_time = time.time() - start
