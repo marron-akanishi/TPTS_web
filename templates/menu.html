@@ -68,6 +68,19 @@
         </form>
       </td>
     </tr>
+    <tr>
+      <td>指定したキーワードの直近{{setting.MaxCount}}件から画像を取得</td>
+      <td align="right">
+        <form class="form-inline" style="display:inline;">
+          <input type="hidden" name="mode" value="keyword">
+          <label for="keyword">キーワード: </label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="keyword" name="query" placeholder="hoge" required>
+          </div>
+          <button type="submit" class="btn btn-primary">取得開始</button>
+        </form>
+      </td>
+    </tr>
   {% endif %}
   {% if admin or setting.AdminShow or setting.LimitMode %}
     <tr>

@@ -147,6 +147,14 @@ def getTweets(api, mode, count, query):
                 tweet_id.append(status.id)
             image_count += on_status(status, dbfile, mode)
             tweet_count += 1
+    elif mode == "keyword":
+        for status in tp.Cursor(api.search, q=query).items(count):
+            if status.id in tweet_id:
+                continue
+            else:
+                tweet_id.append(status.id)
+            image_count += on_status(status, dbfile, mode)
+            tweet_count += 1
     
     elapsed_time = time.time() - start
     # 実行時間,全ツイート数,全画像枚数をデータベースに
