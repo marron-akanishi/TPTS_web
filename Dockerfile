@@ -20,7 +20,7 @@ ADD default.conf /etc/nginx/conf.d/
 RUN systemctl enable nginx
 EXPOSE 80
 # script
-RUN git clone https://github.com/marron-general/TPTS_web /usr/src/TPTS_web
+RUN git clone https://github.com/marron-akanishi/TPTS_web /usr/src/TPTS_web
 WORKDIR /usr/src/TPTS_web/
 ADD setting.json /usr/src/TPTS_web
 RUN python -m venv venv \
