@@ -30,17 +30,16 @@ Twitterから画像を収集し、二次元画像のみを自動で判別して�
 ```
 デバッグモードの場合は、バグ修正のためUserStreamによる回収を行いません。  
 以降の工程はDockerを使う場合とローカル上でそのまま動かす場合で異なります。  
-~~DockerはNginx+uWSGIによる本番運用モード、ローカルはFlask内蔵のサーバーを使用した開発モードとなっています。~~  
-現在はまだどちらもFlask内蔵のサーバーとなっています。  
+DockerはNginx+uWSGIによる本番運用モード、ローカルはFlask内蔵のサーバーを使用した開発モードとなっています。    
 独自にFlask内蔵以外のWebサーバーを使用する場合は、タイムアウトの時間を5分ぐらいに設定してください。収集が完了する前に切断してしまう可能性があります。
 
 ### Dockerで使う場合
-Dockerfileはホスト側、Dockerの仮想側ともにArch Linuxを使用することを想定して書かれています。(メンテナーの趣味)  
-また、localhost:5050にポートフォワードし、/etc/localtimeにバインドして、JST対応させています。  
+DockerfileはUbuntu 16.04で動かしています。  
+以下の例ではホストの8080ポートに飛ぶように設定する例です。ポート番号は適宜変更してください。  
 
 ```bash
 # docker build -t tpts .
-# docker run -d -p 5050:5000 -ti -v /etc/localtime:/etc/localtime:ro tpts
+# docker run -d -p 8080:80 tpts
 ```
 
 ### ローカルで使う場合
