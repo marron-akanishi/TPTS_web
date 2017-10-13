@@ -1,26 +1,34 @@
-FROM base/archlinux:latest
-MAINTAINER guni973
+FROM ubuntu:xenial
+LABEL maintainer="Marron Akanishi"
 
-RUN pacman -Syyu  --noconfirm
-RUN pacman-db-upgrade
-RUN pacman -S     --noconfirm base base-devel && \
-    pacman -S     --noconfirm python python-pip git cmake gcc boost
+# apt
+RUN sed -i.bak -e "s%http://archive.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list
+RUN apt update \
+    && apt install -y python3 python3-pip python3-venv git cmake gcc libboost-python-dev tzdata nginx
 
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+# timezone
+ENV TZ Asia/Tokyo
+RUN echo "${TZ}" > /etc/timezone \
+    && rm /etc/localtime \
+    && ln -s /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata \ 
+    && rm -rf /var/lib/apt/lists/*
 
+# setting
+# nginx
+ADD default.conf /etc/nginx/conf.d/
+RUN systemctl enable nginx
+EXPOSE 80
+# script
 RUN git clone https://github.com/marron-general/TPTS_web /usr/src/TPTS_web
-
 WORKDIR /usr/src/TPTS_web/
 ADD setting.json /usr/src/TPTS_web
-RUN python -m venv venv
-RUN source venv/bin/activate
-RUN pip install -r requirements.txt
-RUN pip install dlib
+RUN python -m venv venv \
+    && source venv/bin/activate \
+    && pip install -r requirements.txt \
+    && deactivate
 
-CMD git pull
-CMD python app.py
+# run
+CMD source /usr/src/TPTS_web/venv/bin/activate \ 
+    && uwsgi --ini myapp.ini
 
