@@ -6,7 +6,7 @@ import cv2
 from dlib import simple_object_detector
 
 # 検出に必要なファイル
-face_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_face_test.svm"))
+face_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_face_new.svm"))
 eye_detector = simple_object_detector(abspath(__file__).replace(basename(__file__),"detector_eye.svm"))
 
 def face_2d(temp_file, userid, filename):
