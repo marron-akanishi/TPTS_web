@@ -28,6 +28,7 @@ RUN python3 -m venv venv \
     && deactivate
 
 # run
+CMD git pull origin
 CMD /etc/init.d/nginx start \
     && . /usr/src/TPTS_web/venv/bin/activate \
     && uwsgi --ini myapp.ini
