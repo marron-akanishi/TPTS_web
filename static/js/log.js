@@ -3,7 +3,7 @@ jQuery(function($){
         event.preventDefault();
         var $form = $(this);
         $.ajax({
-            url: '/getlog',
+            url: './getlog',
             type: 'POST',
             data: $form.serialize(),
             success:function(resultdata) {

@@ -22,7 +22,7 @@ jQuery(function($){
         event.preventDefault();
         var $form = $(this);
         $.ajax({
-            url: '/makelist',
+            url: './makelist',
             type: 'POST',
             data: $form.serialize(),
             beforeSend: function(xhr, settings) {
@@ -57,7 +57,7 @@ function delfiles(){
     dispLoading("削除中...");
     $("#modal-dialog").modal('hide');
     $.ajax({
-        url: '/delete',
+        url: './delete',
         type: 'POST',
         beforeSend: function(xhr, settings) {
             // ボタンを無効化し、二重送信を防止

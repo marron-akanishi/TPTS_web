@@ -5,7 +5,7 @@
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/download.js"></script>
 <div class="container-fluid">
-  <input type="button" class="btn btn-primary" onclick="location.href='/menu'" value="メニューに戻る">
+  <input type="button" class="btn btn-primary" onclick="location.href='./menu'" value="メニューに戻る">
   {% if count >= 1 %}
     <input type="button" class="btn btn-primary" onclick="DownloadZip()" value="一括ダウンロード">
   {% endif %}
@@ -26,7 +26,7 @@
   </ul>
   {% for detail in filelist %}
   <div style="display:inline;">
-    <button onclick="location.href='/detail?mode={{mode}}&dbname={{dbname}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
+    <button onclick="location.href='./detail?mode={{mode}}&dbname={{dbname}}&id={{detail.id}}'" class="btn btn-link thum" data-toggle="tooltip" data-placement="top" title="{{detail.tags}}">
       <div class="trim" id="{{detail.id}}">
         <img data-original="{{detail.image}}:thumb" width="150" height="150" />
         {% if detail.tags != "" %}
