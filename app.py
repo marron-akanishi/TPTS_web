@@ -56,7 +56,7 @@ def index():
     key = flask.request.cookies.get('key')
     secret = flask.request.cookies.get('secret')
     if key is None or secret is None:
-        return flask.render_template('index.html')
+        return flask.render_template('index.html', route="index")
     else:
         flask.session['key'] = key
         flask.session['secret'] = secret

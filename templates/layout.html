@@ -22,9 +22,15 @@
     {%- block navbar -%}
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#link-list" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
         <a class="navbar-brand" href="/">Ani-Face Detector for Twitter</a>
       </div>
-      <ul class="nav navbar-nav collapse navbar-collapse">
+      <ul id="link-list" class="nav navbar-nav collapse navbar-collapse">
         <li>
           <a class="nav-link" href="/about">About</a>
         </li>
@@ -33,7 +39,20 @@
         </li>
         <li>
           <a class='nav-link' href="https://status.io.watchmouse.com/7617" target="_blank">API Status</a>
+        </li>
+        {% if route is undefined %}
+        <li class="visible-xs">
+          <a class='nav-link' href="/logout">ログアウト</a>
+        </li>
+        {% endif %}
       </ul>
+      {% if route is undefined %}
+        <p class="nav navbar-nav navbar-right hidden-xs" style="padding-right:20px;">
+          <button type="button" class="btn btn-danger navbar-btn" onClick="location.href='/logout'">
+            <span class="glyphicon glyphicon-log-out">ログアウト</span>
+          </button>
+        </p>
+      {% endif %}
     </nav>
     {%- endblock -%}
     {% block menu %}{% endblock %}

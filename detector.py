@@ -33,7 +33,7 @@ def face_2d(temp_file, userid, filename):
         # 顔だけ切り出して目の検索
         for i, area in enumerate(faces):
             # 最小サイズの指定
-            if area.bottom()-area.top() < image.shape[0]*0.05 or area.right()-area.left() < image.shape[1]*0.05:
+            if area.bottom()-area.top() < image.shape[0]*-1 or area.right()-area.left() < image.shape[1]*-1:
                 continue
             face = image[area.top():area.bottom(), area.left():area.right()]
             # 出来た画像から目を検出
