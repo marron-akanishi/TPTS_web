@@ -65,7 +65,7 @@ def index():
 # このページについて
 @app.route('/about')
 def about():
-    return flask.render_template('about.html', count=setting["MaxCount"])
+    return flask.render_template('about.html', count=setting["MaxCount"], route="about")
 
 # twitter認証
 @app.route('/twitter_auth', methods=['GET'])

@@ -65,6 +65,7 @@ function delfiles(){
         },
         success:function(resultdata) {
             alert('削除が完了しました');
+            location.reload();
         },
         error: function(error) {
             alert('削除に失敗しました');
