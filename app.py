@@ -226,7 +226,7 @@ def image_list():
             images,count,result = db.get_list("DB/user/" + dbname + ".db", mode)
     except:
          return flask.render_template('error.html')
-    return flask.render_template('view.html', filelist=images, count=count, mode=mode, dbname=dbname, result = result)
+    return flask.render_template('view.html', filelist=images, count=count, mode=mode, dbname=dbname, result=result)
 
 # 画像詳細
 @app.route('/detail', methods=['GET'])

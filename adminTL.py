@@ -103,7 +103,7 @@ class StreamListener(tp.StreamListener):
                             # データベースに保存
                             SQL = "insert into list values (?,?,?,?,0,0,?,?,?,?,?,?)"
                             url = "https://twitter.com/" + status.user.screen_name + "/status/" + status.id_str
-                            value = (filename, media_url, status.user.screen_name, url, str(tags).replace("'",""),
+                            value = (filename, media_url.replace('http://','https://'), status.user.screen_name, url, str(tags).replace("'",""),
                                     str(datetime.datetime.now()), str(facex), str(facey), str(facew), str(faceh))
                             self.dbfile.execute(SQL, value)
                             self.dbfile.commit()
