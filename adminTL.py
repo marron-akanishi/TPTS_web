@@ -23,6 +23,27 @@ class StreamListener(tp.StreamListener):
         self.old_date = datetime.date.today()
         self.reset()
 
+    def on_error(self, status_code):
+        return True
+
+    def on_connect(self):
+        return
+
+    def on_disconnect(self, notice):
+        return
+
+    def on_limit(self, track):
+        return
+
+    def on_timeout(self):
+        return True
+
+    def on_warning(self, notice):
+        return
+
+    def on_exception(self, exception):
+        return
+
     def on_status(self, status):
         """UserStreamから飛んできたStatusを処理する"""
         # Tweetに画像がついているか
