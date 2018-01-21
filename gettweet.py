@@ -124,6 +124,7 @@ def getTweets(api, mode, count, query):
             id, temp_count, return_md5 = on_status(status, dbfile, mode, id, file_md5)
             file_md5 += return_md5
             image_count += temp_count
+            tweet_count += 1
     elif mode == "user":
         for status in tp.Cursor(api.user_timeline, screen_name=query).items(count):
             if status.id in tweet_id:

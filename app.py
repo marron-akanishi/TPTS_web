@@ -245,6 +245,7 @@ def image_detail():
             detail,html,idinfo,count = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
     except:
         return flask.render_template('error.html')
+    detail['eshi'] = "@eshi_hantei tweet_id:" + detail['url'].split('/')[-1]
     return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo, mode=mode, dbname=dbname, max=count-1)
 
 if __name__ == '__main__':
