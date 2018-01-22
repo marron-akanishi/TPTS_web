@@ -81,7 +81,7 @@ def twitter_oauth():
         # 認証後に必要な request_token を session に保存
         flask.session['request_token'] = auth_temp.request_token
         # リダイレクト
-        return flask.redirect(redirect_url)
+        return flask.redirect(redirect_url.replace("authorize","authenticate"))
     else:
         flask.session['key'] = key
         flask.session['secret'] = secret
