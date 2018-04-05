@@ -43,9 +43,9 @@ def login_check(func):
         # きちんと認証していればセッション情報がある
         try:
             if flask.session['userID'] is None:
-                return flask.redirect(flask.url_for('index'))
+                return flask.redirect(flask.url_for('twitter_oauth'))
         except:
-            return flask.redirect(flask.url_for('index'))
+            return flask.redirect(flask.url_for('twitter_oauth'))
         return func(*args, **kwargs)
     return checker
 
@@ -61,6 +61,13 @@ def index():
         flask.session['key'] = key
         flask.session['secret'] = secret
         return flask.redirect(flask.url_for('twitter_authed', cookie=True))
+
+# 証明書更新
+@app.route('/.well-known/acme-challenge/<token_value>')
+def letsencrypt(token_value):
+    with open('/var/www/html/tpts_cert/.well-known/acme-challenge/{}'.format(token_value)) as f:
+        answer = f.readline().strip()
+    return answer
 
 # このページについて
 @app.route('/about')
@@ -81,7 +88,7 @@ def twitter_oauth():
         # 認証後に必要な request_token を session に保存
         flask.session['request_token'] = auth_temp.request_token
         # リダイレクト
-        return flask.redirect(redirect_url)
+        return flask.redirect(redirect_url.replace("authorize","authenticate"))
     else:
         flask.session['key'] = key
         flask.session['secret'] = secret
@@ -245,7 +252,7 @@ def image_detail():
             detail,html,idinfo,count = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
     except:
         return flask.render_template('error.html')
-    detail['eshi'] = "@eshi_hantei tweet_id:" + detail['url'].split('/')[-1]
+    detail['eshi'] = "%40eshi_hantei%20tweet_id%3A" + detail['url'].split('/')[-1]
     return flask.render_template('detail.html', data=detail, html=html, idcount=idinfo, mode=mode, dbname=dbname, max=count-1)
 
 if __name__ == '__main__':
