@@ -22,12 +22,6 @@ setting = json.load(open("setting.json"))
 app.secret_key = setting['SecretKey']
 app.debug = setting['Debug'] # デバッグモード
 
-# 回収
-if(setting['Debug'] == False):
-    t1 = adminTL.TLThread()
-    t1.setDaemon(True)
-    t1.start()
-
 # 認証後に使用可能
 def tp_api():
     auth = tp.OAuthHandler(setting['twitter_API']['CK'], setting['twitter_API']['CS'], setting['twitter_API']['Callback_URL'])
@@ -61,13 +55,6 @@ def index():
         flask.session['key'] = key
         flask.session['secret'] = secret
         return flask.redirect(flask.url_for('twitter_authed', cookie=True))
-
-# 証明書更新
-@app.route('/.well-known/acme-challenge/<token_value>')
-def letsencrypt(token_value):
-    with open('/var/www/html/tpts_cert/.well-known/acme-challenge/{}'.format(token_value)) as f:
-        answer = f.readline().strip()
-    return answer
 
 # このページについて
 @app.route('/about')
@@ -127,43 +114,9 @@ def logout():
 @app.route('/menu')
 @login_check
 def user_page():
-    filelist = []
-    if admin_check() or setting['AdminShow'] or setting['LimitMode']:
-        if sys.platform == "win32":
-            filelist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-        else:
-            filelist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/admin/*.db")])
-        return flask.render_template('menu.html', admin=admin_check(), setting=setting, dblist=filelist, select=filelist[-1])
-    else:
-        return flask.render_template('menu.html', admin=admin_check(), setting=setting)
+    return flask.render_template('menu.html', admin=admin_check(), setting=setting)
 
 # 管理者用
-# ログページ
-@app.route('/admin/logs')
-@login_check
-def log_page():
-    if admin_check():
-        if sys.platform == "win32":
-            loglist = sorted([path.split(os.sep)[1].split('.')[0] for path in glob.glob("DB/log/*.log")])
-        else:
-            loglist = sorted([path.split(os.sep)[2].split('.')[0] for path in glob.glob("DB/log/*.log")])
-    else:
-        return flask.redirect(flask.url_for('user_page'))
-    return flask.render_template('log.html', filelist=loglist)
-
-@app.route('/getlog', methods=['POST'])
-@login_check
-def get_log():
-    if admin_check():
-        filename = flask.request.form['date']
-        log = open("DB/log/{}.log".format(filename))
-        text = log.read()
-        log.close()
-    else:
-        return flask.redirect(flask.url_for('user_page'))
-    if text == "":
-        text = "まだログは記録されていません"
-    return text
 
 @app.route('/delete', methods=['POST'])
 @login_check
@@ -174,22 +127,6 @@ def deltefile():
         for path in glob.glob("DB/user/*.db"):
             check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
             if check.days >= 3:
-                try:
-                    os.remove(path)
-                except:
-                    continue
-        # adminDB
-        for path in glob.glob("DB/admin/*.db"):
-            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
-            if check.days >= 14:
-                try:
-                    os.remove(path)
-                except:
-                    continue
-        # adminLog
-        for path in glob.glob("DB/log/*.log"):
-            check = now - datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
-            if check.days >= 14:
                 try:
                     os.remove(path)
                 except:
@@ -209,12 +146,7 @@ def make_list():
         query = flask.request.form['query']
     except:
         query = ""
-    if mode == "admin":
-        if admin_check() == False and setting['AdminShow'] == False and setting['LimitMode'] == False:
-                flask.abort(401)
-        dbname = flask.request.form['date']
-    else:
-        gettweet.getTweets(tp_api(),mode,setting["MaxCount"],query)
+    gettweet.getTweets(tp_api(),mode,setting["MaxCount"],query)
     return "/view?mode={}&dbname={}".format(mode,dbname)
 
 # 画像リスト
@@ -224,13 +156,7 @@ def image_list():
     mode = flask.request.args.get('mode')
     dbname = flask.session['userID']
     try:
-        if mode == "admin":
-            if admin_check() == False and setting['AdminShow'] == False and setting['LimitMode'] == False:
-                return flask.render_template('error.html')
-            dbname = flask.request.args.get('dbname')
-            images,count,result = db.get_list("DB/admin/" + dbname + ".db", "list")
-        else:
-            images,count,result = db.get_list("DB/user/" + dbname + ".db", mode)
+        images,count,result = db.get_list("DB/user/" + dbname + ".db", mode)
     except:
          return flask.render_template('error.html')
     return flask.render_template('view.html', filelist=images, count=count, mode=mode, dbname=dbname, result=result)
@@ -243,13 +169,7 @@ def image_detail():
     image_id = flask.request.args.get('id')
     dbname = flask.session['userID']
     try:
-        if mode == "admin":
-            if admin_check() == False and setting['AdminShow'] == False and setting['LimitMode'] == False:
-                return flask.render_template('error.html')
-            dbname = flask.request.args.get('dbname')
-            detail,html,idinfo,count = db.get_detail(int(image_id), "DB/admin/"+dbname+".db", "list")
-        else:
-            detail,html,idinfo,count = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
+        detail,html,idinfo,count = db.get_detail(int(image_id), "DB/user/"+dbname+".db", mode)
     except:
         return flask.render_template('error.html')
     detail['eshi'] = "%40eshi_hantei%20tweet_id%3A" + detail['url'].split('/')[-1]

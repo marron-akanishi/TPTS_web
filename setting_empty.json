@@ -9,7 +9,5 @@
         "Callback_URL": "http://localhost:5000/authed"
     },
     "MaxCount": 100,
-    "AdminShow": true,
-    "LimitMode": false,
     "Debug": false
 }

@@ -8,7 +8,6 @@
   <iframe class="container" frameborder="0" id="news-iframe" src="/static/html/info.html"></iframe>
   <h4>メニュー</h4>
   <table class="table">
-  {% if setting.LimitMode == false %}
     <tr>
       <td>ホームTLの直近{{setting.MaxCount}}件から画像を取得</td>
       <td align="right">
@@ -81,35 +80,7 @@
         </form>
       </td>
     </tr>
-  {% endif %}
-  {% if admin or setting.AdminShow or setting.LimitMode %}
-    <tr>
-      <td>管理者のTLから取得した画像を表示</td>
-      <td align="right">
-        <form class="form-inline" style="display:inline;">
-          <input type="hidden" name="mode" value="admin">
-          <label for="date">日付: </label>
-          <select id="date" name="date" class="form-control">
-            {% for dbfile in dblist %}
-              {% if dbfile == select %}
-                <option value="{{dbfile}}" selected>{{dbfile}}
-              {% else %}
-                <option value="{{dbfile}}">{{dbfile}}
-              {% endif %}
-            {% endfor %}
-          </select>
-          <button type="submit" class="btn btn-primary">表示</button>
-        </form>
-      </td>
-    </tr>
-  {% endif %}
   {% if admin %}
-    <tr>
-      <td>ログを表示する</td>
-      <td align="right">
-        <input type="button" class="btn btn-primary" onclick="location.href='/admin/logs'" value="表示">
-      </td>
-    </tr>
     <tr>
       <td>データベースファイルの整理を行う</td>
       <td align="right">
@@ -128,7 +99,6 @@
           <div class="modal-body">
               以下の条件に当てはまるファイルを削除します。<br>
               ・3日以上に前に作成されたユーザー別DBファイル<br>
-              ・2週間以上前に作成された管理者TL収集DBファイルとログファイル<br>
               よろしいですか？
           </div>
           <div class="modal-footer">

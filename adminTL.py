@@ -1,3 +1,5 @@
+# UserStream廃止に伴い使用終了
+
 import os
 import time
 import datetime
